@@ -1,0 +1,12 @@
+{
+  "name": "enablex-cordova-plugin",
+  "version": "1.0.0",
+  "cordova": {
+    "id": "enablex-cordova-plugin",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "description": "Add live video streaming to your Cordova Application"
+}
