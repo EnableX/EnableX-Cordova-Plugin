@@ -4,7 +4,7 @@
 
 ## Sample code
 
-To see the plugin in action, please check out [enableX-cordova-samples.](https://github.com/enablex)
+To see the plugin in action, please check out [enableX-cordova-samples.](https://github.com/EnableX/One-to-One-Video-Chat-Sample-Cordova-Application)
 
 ## Using Cordova CLI
 
