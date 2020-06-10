@@ -594,11 +594,13 @@ public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, 
             height = (int) (height * scale + 0.5f);
             if (height == 0) {
                 height = mScreenHeight;
+                height = height - (topMargin+bottomMargin);
             }
             int width = options.optInt("width");
             width = (int) (width * scale + 0.5f);
             if (width == 0) {
                 width = mScreenWidth;
+                width = width - (leftMargin+rightMargin);
             }
 
             String position = options.optString("position");
@@ -768,10 +770,12 @@ public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, 
             height = (int) (height * scale + 0.5f);
             if (height == 0) {
                 height = mScreenHeight;
+                height = height - (topMargin+bottomMargin);
             }
 
             if(height>mScreenHeight){
                 height = mScreenHeight;
+                height = height - (topMargin+bottomMargin);
             }
 
 
@@ -779,10 +783,12 @@ public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, 
             width = (int) (width * scale + 0.5f);
             if (width == 0) {
                 width = mScreenWidth;
+                width = width - (leftMargin+rightMargin);
             }
 
             if(width>mScreenWidth){
                 width = mScreenWidth;
+                width = width - (leftMargin+rightMargin);
             }
 
             String position = options.optString("position");
