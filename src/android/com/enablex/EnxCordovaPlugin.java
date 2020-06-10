@@ -4,6 +4,7 @@
 package com.enablex;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Handler;
@@ -11,6 +12,7 @@ import android.os.Looper;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
@@ -24,13 +26,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import enx_rtc_android.Controller.EnxActiveTalkerListObserver;
 import enx_rtc_android.Controller.EnxActiveTalkerViewObserver;
 import enx_rtc_android.Controller.EnxAdvancedOptionsObserver;
+import enx_rtc_android.Controller.EnxAnnotationObserver;
 import enx_rtc_android.Controller.EnxBandwidthObserver;
+import enx_rtc_android.Controller.EnxCanvasObserver;
 import enx_rtc_android.Controller.EnxChairControlObserver;
 import enx_rtc_android.Controller.EnxFileShareObserver;
 import enx_rtc_android.Controller.EnxLockRoomManagementObserver;
@@ -48,27 +53,24 @@ import enx_rtc_android.Controller.EnxRecordingObserver;
 import enx_rtc_android.Controller.EnxRoom;
 import enx_rtc_android.Controller.EnxRoomObserver;
 import enx_rtc_android.Controller.EnxRtc;
+import enx_rtc_android.Controller.EnxScreenShareObserver;
 import enx_rtc_android.Controller.EnxScreenShotObserver;
 import enx_rtc_android.Controller.EnxStatsObserver;
 import enx_rtc_android.Controller.EnxStream;
 import enx_rtc_android.Controller.EnxStreamObserver;
 import enx_rtc_android.Controller.EnxTalkerObserver;
-import enx_rtc_android.Controller.EnxUtilityManager;
-import android.content.SharedPreferences;
 
-
-import android.view.View;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-public class EnxCordovaPlugin extends CordovaPlugin
-        implements EnxRoomObserver, EnxStreamObserver, EnxBandwidthObserver, EnxChairControlObserver, EnxLogsObserver,
-        EnxMuteRoomObserver, EnxRecordingObserver, EnxMuteAudioStreamObserver, EnxMuteVideoStreamObserver,
-        EnxNetworkObserever, EnxReconnectObserver, EnxPlayerStatsObserver, EnxAdvancedOptionsObserver,
-        EnxOutBoundCallObserver, EnxScreenShotObserver, EnxFileShareObserver, EnxLockRoomManagementObserver,
-        EnxStatsObserver, EnxTalkerObserver, EnxActiveTalkerViewObserver, EnxActiveTalkerListObserver {
+public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, EnxStreamObserver, EnxBandwidthObserver,
+        EnxChairControlObserver, EnxLogsObserver, EnxMuteRoomObserver, EnxRecordingObserver, EnxMuteAudioStreamObserver,
+        EnxMuteVideoStreamObserver, EnxNetworkObserever, EnxReconnectObserver, EnxPlayerStatsObserver,
+        EnxAdvancedOptionsObserver, EnxOutBoundCallObserver, EnxScreenShotObserver, EnxFileShareObserver,
+        EnxLockRoomManagementObserver, EnxStatsObserver, EnxTalkerObserver, EnxActiveTalkerViewObserver,
+        EnxActiveTalkerListObserver, EnxScreenShareObserver, EnxCanvasObserver, EnxAnnotationObserver {
 
     private EnxRtc mEnxRtc;
     private EnxRoom mEnxRoom;
@@ -84,7 +86,6 @@ public class EnxCordovaPlugin extends CordovaPlugin
     private int mScreenHeight;
     private int mScreenWidth;
     private float scale;
-
 
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
@@ -126,7 +127,7 @@ public class EnxCordovaPlugin extends CordovaPlugin
         } else if (action.equals("hideSelfView")) {
             mEventListeners.put(action, callbackContext);
             hideSelfView(args);
-        }else if (action.equals("hideRemoteView")) {
+        } else if (action.equals("hideRemoteView")) {
             mEventListeners.put(action, callbackContext);
             hideRemoteView(args);
         } else if (action.equals("resizeLocalView")) {
@@ -217,6 +218,8 @@ public class EnxCordovaPlugin extends CordovaPlugin
         } else if (action.equals("startVideoTracksOnApplicationForeground")) {
             startVideoTracksOnApplicationForeground(args);
         } else if (action.equals("enableStats")) {
+            enableStats(args);
+        } else if (action.equals("switchUserRole")) {
             switchUserRole(args);
         } else if (action.equals("makeOutboundCall")) {
             makeOutboundCall(args);
@@ -228,8 +231,52 @@ public class EnxCordovaPlugin extends CordovaPlugin
             setAdvancedOptions(args);
         } else if (action.equals("getAdvancedOptions")) {
             getAdvancedOptions();
-        } else if (action.equals("OnCapturedView")) {
+        } else if (action.equals("sendFiles")) {
+            sendFiles(args);
+        } else if (action.equals("downloadFile")) {
+            downloadFile(args);
+        } else if (action.equals("cancelUpload")) {
+            cancelUpload(args);
+        } else if (action.equals("cancelDownload")) {
+            cancelDownload(args);
+        } else if (action.equals("cancelAllUploads")) {
+            cancelAllUploads();
+        } else if (action.equals("cancelAllDownloads")) {
+            cancelAllDownloads();
+        } else if (action.equals("getAvailableFiles")) {
+            getAvailableFiles();
+        } else if (action.equals("getClientId")) {
             mEventListeners.put(action, callbackContext);
+            getClientId();
+        } else if (action.equals("getRoomId")) {
+            mEventListeners.put(action, callbackContext);
+            getRoomId();
+        } else if (action.equals("getClientName")) {
+            mEventListeners.put(action, callbackContext);
+            getClientName();
+        } else if (action.equals("getLocalStreamID")) {
+            mEventListeners.put(action, callbackContext);
+            getLocalStreamID();
+        } else if (action.equals("getUserList")) {
+            getUserList();
+        } else if (action.equals("getRoomMetadata")) {
+            mEventListeners.put(action, callbackContext);
+            getRoomMetadata();
+        } else if (action.equals("isConnected")) {
+            mEventListeners.put(action, callbackContext);
+            isConnected();
+        } else if (action.equals("enableProximitySensor")) {
+            mEventListeners.put(action, callbackContext);
+            enableProximitySensor(args);
+        } else if (action.equals("getMode")) {
+            mEventListeners.put(action, callbackContext);
+            getMode();
+        } else if (action.equals("getRole")) {
+            mEventListeners.put(action, callbackContext);
+            getRole();
+        } else if (action.equals("whoAmI")) {
+            mEventListeners.put(action, callbackContext);
+            whoAmI();
         } else if (action.equals("onRoomConnected")) {
             mEventListeners.put(action, callbackContext);
         } else if (action.equals("onRoomError")) {
@@ -384,6 +431,22 @@ public class EnxCordovaPlugin extends CordovaPlugin
             mEventListeners.put(action, callbackContext);
         } else if (action.equals("onUserDataReceived")) {
             mEventListeners.put(action, callbackContext);
+        } else if (action.equals("onCanvasStarted")) {
+            mEventListeners.put(action, callbackContext);
+        } else if (action.equals("onCanvasStopped")) {
+            mEventListeners.put(action, callbackContext);
+        } else if (action.equals("onScreenSharedStarted")) {
+            mEventListeners.put(action, callbackContext);
+        } else if (action.equals("onScreenSharedStopped")) {
+            mEventListeners.put(action, callbackContext);
+        } else if (action.equals("onAnnotationStarted")) {
+            mEventListeners.put(action, callbackContext);
+        } else if (action.equals("onStartAnnotationAck")) {
+            mEventListeners.put(action, callbackContext);
+        } else if (action.equals("onAnnotationStopped")) {
+            mEventListeners.put(action, callbackContext);
+        } else if (action.equals("onStoppedAnnotationAck")) {
+            mEventListeners.put(action, callbackContext);
         }
         return true;
     }
@@ -411,18 +474,20 @@ public class EnxCordovaPlugin extends CordovaPlugin
         }
     }
 
-    private void joinCall(){
+    private void joinCall() {
         mEnxRtc = new EnxRtc(cordova.getActivity(), this, this);
         mLocalStream = mEnxRtc.joinRoom(token, publishStreamInfo, roomInfo, null);
     }
 
     private void requestPermission() {
-        cordova.requestPermissions(this,PERMISSION_REQUEST_CODE, new String[]{CAMERA, RECORD_AUDIO, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE});
+        cordova.requestPermissions(this, PERMISSION_REQUEST_CODE,
+                new String[] { CAMERA, RECORD_AUDIO, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE });
 
     }
 
     @Override
-    public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
+    public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults)
+            throws JSONException {
         super.onRequestPermissionResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case PERMISSION_REQUEST_CODE:
@@ -529,13 +594,11 @@ public class EnxCordovaPlugin extends CordovaPlugin
             height = (int) (height * scale + 0.5f);
             if (height == 0) {
                 height = mScreenHeight;
-                height = height - (topMargin + bottomMargin);
             }
             int width = options.optInt("width");
             width = (int) (width * scale + 0.5f);
             if (width == 0) {
                 width = mScreenWidth;
-                width = width - (leftMargin + rightMargin);
             }
 
             String position = options.optString("position");
@@ -572,45 +635,52 @@ public class EnxCordovaPlugin extends CordovaPlugin
         }
     }
 
-
-    
     private void hideSelfView(JSONArray args) {
-        try {
-            JSONObject options = args.getJSONObject(0);
-            boolean status = options.getBoolean("hide");
-            if (status) {
-                mLocalView.setVisibility(View.GONE);
-                mLocalView.removeView(mLocalStream.mEnxPlayerView);
-            } else {
-                mLocalView.setVisibility(View.VISIBLE);
-                mLocalView.addView(mLocalStream.mEnxPlayerView);
-                mLocalView.bringToFront();
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONObject options = args.getJSONObject(0);
+                    boolean status = options.getBoolean("hide");
+                    if (status) {
+                        mLocalView.setVisibility(View.GONE);
+                        mLocalView.removeView(mLocalStream.mEnxPlayerView);
+                    } else {
+                        mLocalView.setVisibility(View.VISIBLE);
+                        mLocalView.addView(mLocalStream.mEnxPlayerView);
+                        mLocalView.bringToFront();
+                    }
+
+                    triggerSuccussJSEvent("hideSelfView", "hideSelfView", "Success");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-
-            triggerSuccussJSEvent("hideSelfView","hideSelfView","Success");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        });
     }
 
     private void hideRemoteView(JSONArray args) {
-        try {
-            JSONObject options = args.getJSONObject(0);
-            boolean status = options.getBoolean("hide");
-            if (status) {
-                mRemoteView.setVisibility(View.GONE);
-                mRemoteView.removeView(mRecyclerView);
-            } else {
-                mRemoteView.setVisibility(View.VISIBLE);
-                mRemoteView.addView(mRecyclerView);
+
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONObject options = args.getJSONObject(0);
+                    boolean status = options.getBoolean("hide");
+                    if (status) {
+                        mRemoteView.setVisibility(View.GONE);
+                        mRemoteView.removeView(mRecyclerView);
+                    } else {
+                        mRemoteView.setVisibility(View.VISIBLE);
+                        mRemoteView.addView(mRecyclerView);
+                    }
+
+                    triggerSuccussJSEvent("hideRemoteView", "hideRemoteView", "Success");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-
-            triggerSuccussJSEvent("hideRemoteView","hideRemoteView","Success");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        });
     }
 
     private void resizeLocalView(JSONArray args) {
@@ -628,13 +698,20 @@ public class EnxCordovaPlugin extends CordovaPlugin
             height = (int) (height * scale + 0.5f);
             if (height == 0) {
                 height = mScreenHeight;
-                height = height - (topMargin + bottomMargin);
             }
+
+            if(height>mScreenHeight){
+                height = mScreenHeight;
+            }
+            
             int width = options.optInt("width");
             width = (int) (width * scale + 0.5f);
             if (width == 0) {
                 width = mScreenWidth;
-                width = width - (leftMargin + rightMargin);
+            }
+
+            if(width>mScreenWidth){
+                width = mScreenWidth;
             }
 
             String position = options.optString("position");
@@ -664,9 +741,9 @@ public class EnxCordovaPlugin extends CordovaPlugin
             cordova.getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if(mLocalView != null) {
+                    if (mLocalView != null) {
                         mLocalView.setLayoutParams(layoutParams);
-                        triggerSuccussJSEvent("resizeLocalView","resizeLocalView","Success");
+                        triggerSuccussJSEvent("resizeLocalView", "resizeLocalView", "Success");
                     }
                 }
             });
@@ -691,13 +768,21 @@ public class EnxCordovaPlugin extends CordovaPlugin
             height = (int) (height * scale + 0.5f);
             if (height == 0) {
                 height = mScreenHeight;
-                height = height - (topMargin + bottomMargin);
             }
+
+            if(height>mScreenHeight){
+                height = mScreenHeight;
+            }
+
+
             int width = options.optInt("width");
             width = (int) (width * scale + 0.5f);
             if (width == 0) {
                 width = mScreenWidth;
-                width = width - (leftMargin + rightMargin);
+            }
+
+            if(width>mScreenWidth){
+                width = mScreenWidth;
             }
 
             String position = options.optString("position");
@@ -725,13 +810,9 @@ public class EnxCordovaPlugin extends CordovaPlugin
             cordova.getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if(mRemoteView != null) {
+                    if (mRemoteView != null) {
                         mRemoteView.setLayoutParams(layoutParams);
-                        triggerSuccussJSEvent("resizeRemoteView","resizeRemoteView","Success");
-                    }
-
-                    if(mEnxRoom != null){
-                        mEnxRoom.adjustLayout();
+                        triggerSuccussJSEvent("resizeRemoteView", "resizeRemoteView", "Success");
                     }
                 }
             });
@@ -739,7 +820,6 @@ public class EnxCordovaPlugin extends CordovaPlugin
             e.printStackTrace();
         }
     }
-
 
     private void muteSelfAudio(JSONArray args) {
         try {
@@ -896,12 +976,17 @@ public class EnxCordovaPlugin extends CordovaPlugin
     }
 
     private void adjustLayout() {
-        if (mEnxRoom != null) {
-            mEnxRoom.adjustLayout();
-            triggerSuccussJSEvent("adjustLayout", "adjustLayout", "Success");
-        } else {
-            reportErrorToJS("Object is not initialize : EnxRoom");
-        }
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mEnxRoom != null) {
+                    mEnxRoom.adjustLayout();
+                    triggerSuccussJSEvent("adjustLayout", "adjustLayout", "Success");
+                } else {
+                    reportErrorToJS("Object is not initialize : EnxRoom");
+                }
+            }
+        });
     }
 
     private void updateConfiguration(JSONArray args) {
@@ -1190,76 +1275,170 @@ public class EnxCordovaPlugin extends CordovaPlugin
         }
     }
 
-    private void sendFiles() {
+    private void sendFiles(JSONArray args) {
+        try {
+            if (mEnxRoom != null) {
+                JSONObject options = args.getJSONObject(0);
+                JSONArray jsonArray = options.getJSONArray("array");
+                boolean broadcast = options.getBoolean("broadcast");
 
+                List<String> list = new ArrayList<>();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    list.add(jsonObject.getString("clientId"));
+                }
+
+                mEnxRoom.sendFiles(broadcast, list);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    private void downloadFile() {
+    private void downloadFile(JSONArray args) {
+        try {
+            if (mEnxRoom != null) {
+                JSONObject options = args.getJSONObject(0);
+                boolean isAutoSave = options.getBoolean("isAutoSave");
+                JSONObject jsonObject = options.getJSONObject("json");
 
+                mEnxRoom.downloadFile(jsonObject, isAutoSave);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    private void cancelUpload() {
+    private void cancelUpload(JSONArray args) {
+        try {
+            if (mEnxRoom != null) {
+                JSONObject options = args.getJSONObject(0);
+                int jobId = options.getInt("jobId");
 
+                mEnxRoom.cancelUpload(jobId);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    private void cancelDownload() {
+    private void cancelDownload(JSONArray args) {
+        try {
+            if (mEnxRoom != null) {
+                JSONObject options = args.getJSONObject(0);
+                int jobId = options.getInt("jobId");
 
+                mEnxRoom.cancelDownload(jobId);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void cancelAllUploads() {
-
+        if (mEnxRoom != null) {
+            mEnxRoom.cancelAllUploads();
+        }
     }
 
     private void cancelAllDownloads() {
-
+        if (mEnxRoom != null) {
+            mEnxRoom.cancelAllDownloads();
+        }
     }
 
     private void getAvailableFiles() {
-
+        try {
+            if (mEnxRoom != null) {
+                mEnxRoom.getAvailableFiles();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void getClientId() {
-
+        if (mEnxRoom != null) {
+            String clientId = mEnxRoom.getClientId();
+            triggerSuccussJSEvent("getClientId", "getClientId", clientId);
+        }
     }
 
     private void getRoomId() {
-
+        if (mEnxRoom != null) {
+            String roomID = mEnxRoom.getRoomId();
+            triggerSuccussJSEvent("getRoomId", "getRoomId", roomID);
+        }
     }
 
     private void getClientName() {
-
+        if (mEnxRoom != null) {
+            String clientName = mEnxRoom.getClientName();
+            triggerSuccussJSEvent("getClientName", "getClientName", clientName);
+        }
     }
 
     private void getLocalStreamID() {
-
+        if (mEnxRoom != null) {
+            String clientId = mEnxRoom.getLocalStreamID();
+            triggerSuccussJSEvent("getLocalStreamID", "getLocalStreamID", clientId);
+        }
     }
 
     private void getUserList() {
-
+        if (mEnxRoom != null) {
+            JSONArray clientIds = mEnxRoom.getUserList();
+            triggerSuccussJSEvent("getUserList", "getUserList", clientIds);
+        }
     }
 
     private void getRoomMetadata() {
-
+        if (mEnxRoom != null) {
+            JSONObject roomMetadata = mEnxRoom.getRoomMetadata();
+            triggerSuccussJSEvent("getRoomMetadata", "getRoomMetadata", roomMetadata);
+        }
     }
 
     private void isConnected() {
-
+        if (mEnxRoom != null) {
+            boolean isConnected = mEnxRoom.isConnected();
+            triggerSuccussJSEvent("isConnected", "isConnected", isConnected);
+        }
     }
 
-    private void enableProximitySensor() {
+    private void enableProximitySensor(JSONArray args) {
+        try {
+            if (mEnxRoom != null) {
+                JSONObject options = args.getJSONObject(0);
+                boolean status = options.getBoolean("status");
 
+                // mEnxRoom.enableProximitySensor(status);
+                // triggerSuccussJSEvent("enableProximitySensor","enableProximitySensor",status);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void getMode() {
-
+        if (mEnxRoom != null) {
+            String mode = mEnxRoom.getMode();
+            triggerSuccussJSEvent("getMode", "getMode", mode);
+        }
     }
 
     private void getRole() {
-
+        if (mEnxRoom != null) {
+            String mRole = mEnxRoom.getRole();
+            triggerSuccussJSEvent("getRole", "getRole", mRole);
+        }
     }
 
     private void whoAmI() {
-
+        if (mEnxRoom != null) {
+            JSONObject whoAmI = mEnxRoom.whoAmI();
+            triggerSuccussJSEvent("whoAmI", "whoAmI", whoAmI);
+        }
     }
 
     private void switchMediaDevice(JSONArray args) {
@@ -1400,7 +1579,7 @@ public class EnxCordovaPlugin extends CordovaPlugin
 
     @Override
     public void onRoomError(JSONObject jsonObject) {
-        triggerErrorJSEvent("joinRoom", "onRoomError", jsonObject);
+        triggerErrorJSEvent("onRoomError", "onRoomError", jsonObject);
     }
 
     @Override
@@ -1420,7 +1599,8 @@ public class EnxCordovaPlugin extends CordovaPlugin
 
     @Override
     public void onUnPublishedStream(EnxStream enxStream) {
-        // triggerSuccussJSEvent("onUnPublishedStream", "onUnPublishedStream", jsonObject);
+        // triggerSuccussJSEvent("onUnPublishedStream", "onUnPublishedStream",
+        // jsonObject);
     }
 
     @Override
@@ -1493,7 +1673,7 @@ public class EnxCordovaPlugin extends CordovaPlugin
 
     @Override
     public void onNotifyDeviceUpdate(String s) {
-        triggerSuccussJSEvent("onNotifyDeviceUpdate", "switchMediaDevice", s);
+        triggerSuccussJSEvent("onNotifyDeviceUpdate", "onNotifyDeviceUpdate", s);
     }
 
     @Override
@@ -1533,12 +1713,12 @@ public class EnxCordovaPlugin extends CordovaPlugin
 
     @Override
     public void onAudioEvent(JSONObject jsonObject) {
-        triggerSuccussJSEvent("onAudioEvent", "muteSelfAudio", jsonObject);
+        triggerSuccussJSEvent("onAudioEvent", "onAudioEvent", jsonObject);
     }
 
     @Override
     public void onVideoEvent(JSONObject jsonObject) {
-        triggerSuccussJSEvent("onVideoEvent", "muteSelfVideo", jsonObject);
+        triggerSuccussJSEvent("onVideoEvent", "onVideoEvent", jsonObject);
     }
 
     @Override
@@ -1628,52 +1808,52 @@ public class EnxCordovaPlugin extends CordovaPlugin
 
     @Override
     public void onFileUploadStarted(JSONObject jsonObject) {
-
+        triggerSuccussJSEvent("onFileUploadStarted", "onFileUploadStarted", jsonObject);
     }
 
     @Override
     public void onFileAvailable(JSONObject jsonObject) {
-
+        triggerSuccussJSEvent("onFileAvailable", "onFileAvailable", jsonObject);
     }
 
     @Override
     public void onInitFileUpload(JSONObject jsonObject) {
-
+        triggerSuccussJSEvent("onInitFileUpload", "onInitFileUpload", jsonObject);
     }
 
     @Override
     public void onFileUploaded(JSONObject jsonObject) {
-
+        triggerSuccussJSEvent("onFileUploaded", "onFileUploaded", jsonObject);
     }
 
     @Override
     public void onFileUploadCancelled(JSONObject jsonObject) {
-
+        triggerSuccussJSEvent("onFileUploadCancelled", "onFileUploadCancelled", jsonObject);
     }
 
     @Override
     public void onFileUploadFailed(JSONObject jsonObject) {
-
+        triggerSuccussJSEvent("onFileUploadFailed", "onFileUploadFailed", jsonObject);
     }
 
     @Override
     public void onFileDownloaded(JSONObject jsonObject) {
-
+        triggerSuccussJSEvent("onFileDownloaded", "onFileDownloaded", jsonObject);
     }
 
     @Override
     public void onFileDownloadCancelled(JSONObject jsonObject) {
-
+        triggerSuccussJSEvent("onFileDownloadCancelled", "onFileDownloadCancelled", jsonObject);
     }
 
     @Override
     public void onFileDownloadFailed(JSONObject jsonObject) {
-
+        triggerSuccussJSEvent("onFileDownloadFailed", "onFileDownloadFailed", jsonObject);
     }
 
     @Override
     public void onInitFileDownload(JSONObject jsonObject) {
-
+        triggerSuccussJSEvent("onInitFileDownload", "onInitFileDownload", jsonObject);
     }
 
     @Override
@@ -1839,5 +2019,65 @@ public class EnxCordovaPlugin extends CordovaPlugin
     @Override
     public void onMaxTalkerCount(JSONObject jsonObject) {
         triggerSuccussJSEvent("onMaxTalkerCount", "onMaxTalkerCount", jsonObject);
+    }
+
+    @Override
+    public void onCanvasStarted(JSONObject jsonObject) {
+
+    }
+
+    @Override
+    public void onCanvasStarted(EnxStream enxStream) {
+
+    }
+
+    @Override
+    public void onCanvasStopped(JSONObject jsonObject) {
+
+    }
+
+    @Override
+    public void onCanvasStopped(EnxStream enxStream) {
+
+    }
+
+    @Override
+    public void onScreenSharedStarted(JSONObject jsonObject) {
+
+    }
+
+    @Override
+    public void onScreenSharedStopped(JSONObject jsonObject) {
+
+    }
+
+    @Override
+    public void onScreenSharedStarted(EnxStream enxStream) {
+
+    }
+
+    @Override
+    public void onScreenSharedStopped(EnxStream enxStream) {
+
+    }
+
+    @Override
+    public void onAnnotationStarted(EnxStream enxStream) {
+
+    }
+
+    @Override
+    public void onStartAnnotationAck(JSONObject jsonObject) {
+
+    }
+
+    @Override
+    public void onAnnotationStopped(EnxStream enxStream) {
+
+    }
+
+    @Override
+    public void onStoppedAnnotationAck(JSONObject jsonObject) {
+
     }
 }

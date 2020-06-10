@@ -531,81 +531,181 @@ var EnxCordovaPlugin = {
   },
 
 
+  /**
+   * To send files to the other clients.
+   * @param {boolean} broadcast broadCast true to send all the clients and false to send given recipientIDs.
+   * @param {Array} array clientIds/recipientIDs
+   */
   sendFiles: function (broadcast, array) {
     var options = {};
     options.broadcast = broadcast;
     options.array = array;
     exec(null, null, PLUGIN_NAME, 'sendFiles', [options]);
   },
+
+  /**
+   * *To download files that received from other clients
+   * @param {JSON} json 
+   * @param {boolean} isAutoSave 
+   */
   downloadFile: function (json, isAutoSave) {
     var options = {};
     options.json = json;
     options.isAutoSave = isAutoSave;
     exec(null, null, PLUGIN_NAME, 'downloadFile', [options]);
   },
+
+  /**
+   * To cancel upload files to the other clients.
+   * @param {Number} jobId 
+   */
   cancelUpload: function (jobId) {
     var options = {};
     options.jobId = jobId;
     exec(null, null, PLUGIN_NAME, 'cancelUpload', [options]);
   },
+
+  /**
+   * To cancel download files that received from other clients.
+   * @param {Number} jobId 
+   */
   cancelDownload: function (jobId) {
     var options = {};
     options.jobId = jobId;
     exec(null, null, PLUGIN_NAME, 'cancelDownload', [options]);
   },
+
+  /**
+   * To cancel all upload files to the other clients.
+   */
   cancelAllUploads: function () {
     var options = {};
     exec(null, null, PLUGIN_NAME, 'cancelAllUploads', [options]);
   },
+
+  /**
+   * To cancel all downloads files to the other clients.
+   */
   cancelAllDownloads: function () {
     var options = {};
     exec(null, null, PLUGIN_NAME, 'cancelAllDownloads', [options]);
   },
+
+  /**
+   * Get all available files in connected room
+   * @param {CallableFunction} successCallback 
+   * @param {CallableFunction} errorCallback 
+   */
   getAvailableFiles: function (successCallback, errorCallback) {
     var options = {};
     exec(successCallback, errorCallback, PLUGIN_NAME, 'getAvailableFiles', [options]);
   },
+
+  /**
+   * To get self client Id.
+   * @param {CallableFunction} successCallback 
+   * @param {CallableFunction} errorCallback 
+   */
   getClientId: function (successCallback, errorCallback) {
     var options = {};
     exec(successCallback, errorCallback, PLUGIN_NAME, 'getClientId', [options]);
   },
+
+  /**
+   *  To get roomId. 
+   * @param {CallableFunction} successCallback 
+   * @param {CallableFunction} errorCallback 
+   */
   getRoomId: function (successCallback, errorCallback) {
     var options = {};
     exec(successCallback, errorCallback, PLUGIN_NAME, 'getRoomId', [options]);
   },
+
+  /**
+   * To get self client Name.
+   * @param {CallableFunction} successCallback 
+   * @param {CallableFunction} errorCallback 
+   */
   getClientName: function (successCallback, errorCallback) {
     var options = {};
     exec(successCallback, errorCallback, PLUGIN_NAME, 'getClientName', [options]);
   },
+
+  /**
+   * To get local Streamid
+   * @param {CallableFunction} successCallback 
+   * @param {CallableFunction} errorCallback 
+   */
   getLocalStreamID: function (successCallback, errorCallback) {
     var options = {};
     exec(successCallback, errorCallback, PLUGIN_NAME, 'getLocalStreamID', [options]);
   },
+
+  /**
+   *  Get all available users in connected room
+   * @param {CallableFunction} successCallback 
+   * @param {CallableFunction} errorCallback 
+   */
   getUserList: function (successCallback, errorCallback) {
     var options = {};
     exec(successCallback, errorCallback, PLUGIN_NAME, 'getUserList', [options]);
   },
+
+  /**
+   * Get RoomMeta data of the room.
+   * @param {CallableFunction} successCallback 
+   * @param {CallableFunction} errorCallback 
+   */
   getRoomMetadata: function (successCallback, errorCallback) {
     var options = {};
     exec(successCallback, errorCallback, PLUGIN_NAME, 'getRoomMetadata', [options]);
   },
+
+  /**
+   * Used lto check client is connected or not. 
+   * @param {CallableFunction} successCallback 
+   * @param {CallableFunction} errorCallback 
+   */
   isConnected: function (successCallback, errorCallback) {
     var options = {};
     exec(successCallback, errorCallback, PLUGIN_NAME, 'isConnected', [options]);
   },
+
+  /**
+   * To eanble proximity sensor. true for enable and false for disable.
+   * @param {boolean} status 
+   */
   enableProximitySensor: function (status) {
     var options = {};
     options.status = status;
     exec(successCallback, errorCallback, PLUGIN_NAME, 'enableProximitySensor', [options]);
   },
+
+  /**
+   * TO get mode of room.
+   * @param {CallableFunction} successCallback 
+   * @param {CallableFunction} errorCallback 
+   */
   getMode: function (successCallback, errorCallback) {
     var options = {};
     exec(successCallback, errorCallback, PLUGIN_NAME, 'getMode', [options]);
   },
+
+  /**
+   * To get self client role.
+   * @param {CallableFunction} successCallback 
+   * @param {CallableFunction} errorCallback 
+   */
   getRole: function (successCallback, errorCallback) {
     var options = {};
     exec(successCallback, errorCallback, PLUGIN_NAME, 'getRole', [options]);
   },
+
+  /**
+   * Method used to get user-meta information about the user connected on a End-Point.
+   * @param {CallableFunction} successCallback 
+   * @param {CallableFunction} errorCallback 
+   */
   whoAmI: function (successCallback, errorCallback) {
     var options = {};
     exec(successCallback, errorCallback, PLUGIN_NAME, 'whoAmI', [options]);
