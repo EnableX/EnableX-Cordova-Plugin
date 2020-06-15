@@ -55,6 +55,64 @@ var EnxCordovaPlugin = {
   },
 
   /**
+   * Used to add screen share view in the room.
+   * @param {JSON} options 
+   * @param {CallableFunction} successCallback 
+   * @param {CallableFunction} errorCallback 
+   */
+  addScreenShare: function (viewoptions, successCallback, errorCallback) {
+    var options = {};
+    options.viewOptions = viewoptions;
+    exec(successCallback, errorCallback, PLUGIN_NAME, 'addScreenShare', [options]);
+  },
+
+  /**
+   * Used to remove screenshare view which is already stopped in the room.
+   * @param {CallableFunction} successCallback 
+   * @param {CallableFunction} errorCallback 
+   */
+  removeScreenShare: function (successCallback, errorCallback) {
+    var options = {};
+    exec(successCallback, errorCallback, PLUGIN_NAME, 'removeScreenShare', [options]);
+  },
+
+  /**
+   * Used to add canvas screen view in the room.
+   * @param {JSON} options 
+   * @param {CallableFunction} successCallback 
+   * @param {CallableFunction} errorCallback 
+   */
+  addCanvasScreen: function (viewoptions, successCallback, errorCallback) {
+    var options = {};
+    options.viewOptions = viewoptions;
+    exec(successCallback, errorCallback, PLUGIN_NAME, 'addCanvasScreen', [options]);
+  },
+
+  /**
+   * Used to remove canvas screen view which is already stopped in the room.
+   * @param {CallableFunction} successCallback 
+   * @param {CallableFunction} errorCallback 
+   */
+  removeCanvasScreen: function (successCallback, errorCallback) {
+    var options = {};
+    exec(successCallback, errorCallback, PLUGIN_NAME, 'removeCanvasScreen', [options]);
+  },
+
+  /**
+   * Used to start or stop dragging and moving view.
+   * @param {String} view - It should be local for localview and remote for remoteview
+   * @param {boolean} drag - true for start dragging/moving and false for stop dragging/moving
+   * @param {CallableFunction} successCallback 
+   * @param {CallableFunction} errorCallback 
+   */
+  startDragging: function (view,drag,successCallback, errorCallback) {
+    var options = {};
+    options.view = view;
+    options.drag = drag;
+    exec(successCallback, errorCallback, PLUGIN_NAME, 'startDragging', [options]);
+  },
+
+  /**
    * Used to hide(true) and unhide(false) localView during conference
    * @param {boolean} hide 
    * @param {CallableFunction} successCallback 
@@ -78,6 +136,30 @@ var EnxCordovaPlugin = {
     options.hide = hide;
     exec(successCallback, errorCallback, PLUGIN_NAME, 'hideRemoteView', [options]);
   },
+
+  /**
+   * Used to hide(true) and unhide(false) screen share during conference
+   * @param {boolean} hide 
+   * @param {CallableFunction} successCallback 
+   * @param {CallableFunction} errorCallback 
+   */
+  hideScreenShareView: function (hide, successCallback, errorCallback) {
+    var options = {};
+    options.hide = hide;
+    exec(successCallback, errorCallback, PLUGIN_NAME, 'hideSelfView', [options]);
+  },
+
+  /**
+   * Used to hide(true) and unhide(false) canvas during conference
+   * @param {boolean} hide 
+   * @param {CallableFunction} successCallback 
+   * @param {CallableFunction} errorCallback 
+   */
+  hideCanvasScreen: function (hide, successCallback, errorCallback) {
+      var options = {};
+      options.hide = hide;
+      exec(successCallback, errorCallback, PLUGIN_NAME, 'hideSelfView', [options]);
+    },
 
 
   /**

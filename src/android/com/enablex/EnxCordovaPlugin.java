@@ -12,6 +12,7 @@ import android.os.Looper;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -94,6 +95,9 @@ public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, 
     String token;
     JSONObject publishStreamInfo;
     JSONObject roomInfo;
+    RelativeLayout screenShareView;
+
+    JSONArray remoteArgs;
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
@@ -123,19 +127,41 @@ public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, 
             initLocalView(args);
         } else if (action.equals("initRemoteView")) {
             mEventListeners.put(action, callbackContext);
+            remoteArgs = args;
             initRemoteView(args);
+        } else if (action.equals("addScreenShare")) {
+            mEventListeners.put(action, callbackContext);
+            addScreenShare(args);
+        } else if (action.equals("addCanvasScreen")) {
+            mEventListeners.put(action, callbackContext);
+            addCanvasScreen(args);
+        } else if (action.equals("removeScreenShare")) {
+            mEventListeners.put(action, callbackContext);
+            removeScreenShare();
+        } else if (action.equals("removeCanvasScreen")) {
+            mEventListeners.put(action, callbackContext);
+            removeCanvasScreen();
         } else if (action.equals("hideSelfView")) {
             mEventListeners.put(action, callbackContext);
             hideSelfView(args);
         } else if (action.equals("hideRemoteView")) {
             mEventListeners.put(action, callbackContext);
             hideRemoteView(args);
+        } else if (action.equals("hideScreenShareView")) {
+            mEventListeners.put(action, callbackContext);
+            hideScreenShareView(args);
+        } else if (action.equals("hideCanvasScreen")) {
+            mEventListeners.put(action, callbackContext);
+            hideCanvasScreen(args);
         } else if (action.equals("resizeLocalView")) {
             mEventListeners.put(action, callbackContext);
             resizeLocalView(args);
         } else if (action.equals("resizeRemoteView")) {
             mEventListeners.put(action, callbackContext);
             resizeRemoteView(args);
+        } else if (action.equals("startDragging")) {
+            mEventListeners.put(action, callbackContext);
+            startDragging(args);
         } else if (action.equals("muteSelfAudio")) {
             muteSelfAudio(args);
         } else if (action.equals("muteSelfVideo")) {
@@ -282,6 +308,8 @@ public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, 
         } else if (action.equals("onRoomError")) {
             mEventListeners.put(action, callbackContext);
         } else if (action.equals("onUserConnected")) {
+            mEventListeners.put(action, callbackContext);
+        } else if (action.equals("onUserDisConnected")) {
             mEventListeners.put(action, callbackContext);
         } else if (action.equals("onEventError")) {
             mEventListeners.put(action, callbackContext);
@@ -517,13 +545,23 @@ public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, 
                 if (width == 0) {
                     width = 300;
                 }
-                int ht = (int) (height * scale + 0.5f);
-                int wh = (int) (width * scale + 0.5f);
                 int topMargin = (int) (options.optInt("margin_top") * scale + 0.5f);
                 int leftMargin = (int) (options.optInt("margin_left") * scale + 0.5f);
                 int rightMargin = (int) (options.optInt("margin_right") * scale + 0.5f);
                 int bottomMargin = (int) (options.optInt("margin_bottom") * scale + 0.5f);
                 String position = options.optString("position");
+
+                if (height > mScreenHeight) {
+                    height = mScreenHeight;
+                    height = height - (topMargin + bottomMargin);
+                }
+
+                if (width > mScreenWidth) {
+                    width = mScreenWidth;
+                }
+
+                int ht = (int) (height * scale + 0.5f);
+                int wh = (int) (width * scale + 0.5f);
 
                 cordova.getActivity().runOnUiThread(new Runnable() {
                     @Override
@@ -585,56 +623,275 @@ public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, 
             JSONObject jsonObject = args.getJSONObject(0);
             JSONObject options = new JSONObject(jsonObject.getString("remoteviewOptions"));
 
-            int topMargin = (int) (options.optInt("margin_top") * scale + 0.5f);
-            int leftMargin = (int) (options.optInt("margin_left") * scale + 0.5f);
-            int rightMargin = (int) (options.optInt("margin_right") * scale + 0.5f);
-            int bottomMargin = (int) (options.optInt("margin_bottom") * scale + 0.5f);
+            cordova.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
 
-            int height = options.optInt("height");
-            height = (int) (height * scale + 0.5f);
-            if (height == 0) {
-                height = mScreenHeight;
-                height = height - (topMargin+bottomMargin);
-            }
-            int width = options.optInt("width");
-            width = (int) (width * scale + 0.5f);
-            if (width == 0) {
-                width = mScreenWidth;
-                width = width - (leftMargin+rightMargin);
-            }
+                    int topMargin = (int) (options.optInt("margin_top") * scale + 0.5f);
+                    int leftMargin = (int) (options.optInt("margin_left") * scale + 0.5f);
+                    int rightMargin = (int) (options.optInt("margin_right") * scale + 0.5f);
+                    int bottomMargin = (int) (options.optInt("margin_bottom") * scale + 0.5f);
 
-            String position = options.optString("position");
+                    int height = options.optInt("height");
+                    height = (int) (height * scale + 0.5f);
+                    if (height == 0) {
+                        height = mScreenHeight;
+                        height = height - (topMargin + bottomMargin);
+                    }
 
-            mRemoteView = new RelativeLayout(cordova.getActivity());
-            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(width, height);
+                    if (height > mScreenHeight) {
+                        height = mScreenHeight;
+                        height = height - (topMargin + bottomMargin);
+                    }
 
-            if (position != null && !position.equalsIgnoreCase("")) {
-                if (position.equalsIgnoreCase("right")) {
-                    layoutParams.gravity = Gravity.RIGHT;
-                } else if (position.equalsIgnoreCase("left")) {
-                    layoutParams.gravity = Gravity.LEFT;
-                } else if (position.equalsIgnoreCase("bottom")) {
-                    layoutParams.gravity = Gravity.BOTTOM;
-                } else if (position.equalsIgnoreCase("top")) {
-                    layoutParams.gravity = Gravity.TOP;
-                } else if (position.equalsIgnoreCase("center")) {
-                    layoutParams.gravity = Gravity.CENTER;
-                } else {
-                    layoutParams.gravity = Gravity.RIGHT;
+                    int width = options.optInt("width");
+                    width = (int) (width * scale + 0.5f);
+                    if (width == 0) {
+                        width = mScreenWidth;
+                        width = width - (leftMargin + rightMargin);
+                    }
+
+                    if (width > mScreenWidth) {
+                        width = mScreenWidth;
+                    }
+
+                    String position = options.optString("position");
+
+                    if (mRecyclerView != null) {
+                        mRemoteView.removeView(mRecyclerView);
+                    }
+
+                    if (mRemoteView != null) {
+                        parent.removeView(mRemoteView);
+                        mRemoteView = null;
+                    }
+
+                    mRemoteView = new RelativeLayout(cordova.getActivity());
+                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(width, height);
+
+                    if (position != null && !position.equalsIgnoreCase("")) {
+                        if (position.equalsIgnoreCase("right")) {
+                            layoutParams.gravity = Gravity.RIGHT;
+                        } else if (position.equalsIgnoreCase("left")) {
+                            layoutParams.gravity = Gravity.LEFT;
+                        } else if (position.equalsIgnoreCase("bottom")) {
+                            layoutParams.gravity = Gravity.BOTTOM;
+                        } else if (position.equalsIgnoreCase("top")) {
+                            layoutParams.gravity = Gravity.TOP;
+                        } else if (position.equalsIgnoreCase("center")) {
+                            layoutParams.gravity = Gravity.CENTER;
+                        } else {
+                            layoutParams.gravity = Gravity.RIGHT;
+                        }
+                    }
+
+                    layoutParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+                    mRemoteView.setLayoutParams(layoutParams);
+
+                    if (mRecyclerView != null) {
+                        mRemoteView.addView(mRecyclerView);
+                        parent.addView(mRemoteView);
+                        if (mLocalView != null) {
+                            mLocalView.bringToFront();
+                        }
+                        triggerSuccussJSEvent("initRemoteView", "initRemoteView", "Success");
+                    }
                 }
-            }
+            });
 
-            layoutParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
-            mRemoteView.setLayoutParams(layoutParams);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-            if (mRecyclerView != null) {
-                mRemoteView.addView(mRecyclerView);
-                triggerSuccussJSEvent("initRemoteView", "initRemoteView", "Success");
+    private void addScreenShare(JSONArray args) {
+        try {
+
+            if (screenShared) {
+
+                JSONObject jsonObject = args.getJSONObject(0);
+                JSONObject options = new JSONObject(jsonObject.getString("viewOptions"));
+
+                if (screenShareView == null) {
+                    screenShareView = new RelativeLayout(cordova.getActivity());
+                }
+
+                int childCount = screenShareView.getChildCount();
+                if (childCount > 0 && screenShareStream != null) {
+                    screenShareView.removeView(screenShareStream.mEnxPlayerView);
+                    parent.removeView(screenShareView);
+                }
+
+                int topMargin = (int) (options.optInt("margin_top") * scale + 0.5f);
+                int leftMargin = (int) (options.optInt("margin_left") * scale + 0.5f);
+                int rightMargin = (int) (options.optInt("margin_right") * scale + 0.5f);
+                int bottomMargin = (int) (options.optInt("margin_bottom") * scale + 0.5f);
+
+                int height = options.optInt("height");
+                height = (int) (height * scale + 0.5f);
+
+                int width = options.optInt("width");
+                width = (int) (width * scale + 0.5f);
+
+                FrameLayout.LayoutParams layoutParams;
+                if (height == 0 || width == 0) {
+                    layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
+                            FrameLayout.LayoutParams.WRAP_CONTENT);
+                } else {
+                    if (width > mScreenWidth) {
+                        width = mScreenWidth - (leftMargin + rightMargin);
+                    }
+                    if (height > mScreenHeight) {
+                        height = mScreenHeight;
+                        height = height - (topMargin + bottomMargin);
+                    }
+                    layoutParams = new FrameLayout.LayoutParams(width, height);
+                }
+
+                String position = options.optString("position");
+                if (position != null && !position.equalsIgnoreCase("")) {
+                    if (position.equalsIgnoreCase("right")) {
+                        layoutParams.gravity = Gravity.RIGHT;
+                    } else if (position.equalsIgnoreCase("left")) {
+                        layoutParams.gravity = Gravity.LEFT;
+                    } else if (position.equalsIgnoreCase("bottom")) {
+                        layoutParams.gravity = Gravity.BOTTOM;
+                    } else if (position.equalsIgnoreCase("top")) {
+                        layoutParams.gravity = Gravity.TOP;
+                    } else if (position.equalsIgnoreCase("center")) {
+                        layoutParams.gravity = Gravity.CENTER;
+                    } else {
+                        layoutParams.gravity = Gravity.RIGHT;
+                    }
+                } else {
+                    layoutParams.gravity = Gravity.CENTER;
+                }
+
+                layoutParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+                screenShareView.setLayoutParams(layoutParams);
+
+                cordova.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        screenShareView.addView(screenShareStream.mEnxPlayerView);
+                        parent.addView(screenShareView);
+                        triggerSuccussJSEvent("addScreenShare", "addScreenShare", "Success");
+                    }
+                });
+            } else {
+                triggerErrorJSEvent("addScreenShare", "addScreenShare", "Error");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void removeScreenShare() {
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (screenShareView != null) {
+                    parent.removeView(screenShareView);
+                    screenShareView = null;
+                }
+            }
+        });
+    }
+
+    private void addCanvasScreen(JSONArray args) {
+        try {
+
+            if (canvasShared) {
+
+                JSONObject jsonObject = args.getJSONObject(0);
+                JSONObject options = new JSONObject(jsonObject.getString("viewOptions"));
+
+                if (screenShareView == null) {
+                    screenShareView = new RelativeLayout(cordova.getActivity());
+                }
+
+                int childCount = screenShareView.getChildCount();
+                if (childCount > 0 && screenShareStream != null) {
+                    screenShareView.removeView(screenShareStream.mEnxPlayerView);
+                    parent.removeView(screenShareView);
+                }
+
+                int topMargin = (int) (options.optInt("margin_top") * scale + 0.5f);
+                int leftMargin = (int) (options.optInt("margin_left") * scale + 0.5f);
+                int rightMargin = (int) (options.optInt("margin_right") * scale + 0.5f);
+                int bottomMargin = (int) (options.optInt("margin_bottom") * scale + 0.5f);
+
+                int height = options.optInt("height");
+                height = (int) (height * scale + 0.5f);
+
+                int width = options.optInt("width");
+                width = (int) (width * scale + 0.5f);
+
+                FrameLayout.LayoutParams layoutParams;
+                if (height == 0 || width == 0) {
+                    layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
+                            FrameLayout.LayoutParams.WRAP_CONTENT);
+                } else {
+                    if (width > mScreenWidth) {
+                        width = mScreenWidth - (leftMargin + rightMargin);
+                    }
+                    if (height > mScreenHeight) {
+                        height = mScreenHeight;
+                        height = height - (topMargin + bottomMargin);
+                    }
+                    layoutParams = new FrameLayout.LayoutParams(width, height);
+                }
+
+                String position = options.optString("position");
+                if (position != null && !position.equalsIgnoreCase("")) {
+                    if (position.equalsIgnoreCase("right")) {
+                        layoutParams.gravity = Gravity.RIGHT;
+                    } else if (position.equalsIgnoreCase("left")) {
+                        layoutParams.gravity = Gravity.LEFT;
+                    } else if (position.equalsIgnoreCase("bottom")) {
+                        layoutParams.gravity = Gravity.BOTTOM;
+                    } else if (position.equalsIgnoreCase("top")) {
+                        layoutParams.gravity = Gravity.TOP;
+                    } else if (position.equalsIgnoreCase("center")) {
+                        layoutParams.gravity = Gravity.CENTER;
+                    } else {
+                        layoutParams.gravity = Gravity.RIGHT;
+                    }
+                } else {
+                    layoutParams.gravity = Gravity.CENTER;
+                }
+
+                layoutParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+                screenShareView.setLayoutParams(layoutParams);
+
+                cordova.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        screenShareView.addView(canvasShareStream.mEnxPlayerView);
+                        parent.addView(screenShareView);
+                        triggerSuccussJSEvent("addCanvasScreen", "addCanvasScreen", "Success");
+                    }
+                });
+            } else {
+                triggerErrorJSEvent("addCanvasScreen", "addCanvasScreen", "Error");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void removeCanvasScreen() {
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (screenShareView != null) {
+                    parent.removeView(screenShareView);
+                    screenShareView = null;
+                }
+            }
+        });
     }
 
     private void hideSelfView(JSONArray args) {
@@ -685,6 +942,57 @@ public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, 
         });
     }
 
+    private void hideScreenShareView(JSONArray args) {
+
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (screenShared) {
+                        JSONObject options = args.getJSONObject(0);
+                        boolean status = options.getBoolean("hide");
+                        if (status) {
+                            parent.removeView(screenShareView);
+                        } else {
+                            parent.addView(screenShareView);
+                        }
+                        triggerSuccussJSEvent("hideScreenShareView", "hideScreenShareView", "Success");
+                    } else {
+                        triggerErrorJSEvent("hideScreenShareView", "hideScreenShareView", "Error");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void hideCanvasScreen(JSONArray args) {
+
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (canvasShared) {
+                        JSONObject options = args.getJSONObject(0);
+                        boolean status = options.getBoolean("hide");
+                        if (status) {
+                            parent.removeView(screenShareView);
+                        } else {
+                            parent.addView(screenShareView);
+                        }
+
+                        triggerSuccussJSEvent("hideCanvasScreen", "hideCanvasScreen", "Success");
+                    } else {
+                        triggerErrorJSEvent("hideCanvasScreen", "hideCanvasScreen", "Error");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
     private void resizeLocalView(JSONArray args) {
         try {
 
@@ -700,19 +1008,21 @@ public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, 
             height = (int) (height * scale + 0.5f);
             if (height == 0) {
                 height = mScreenHeight;
+                height = height - (topMargin + bottomMargin);
             }
 
-            if(height>mScreenHeight){
+            if (height > mScreenHeight) {
                 height = mScreenHeight;
+                height = height - (topMargin + bottomMargin);
             }
-            
+
             int width = options.optInt("width");
             width = (int) (width * scale + 0.5f);
             if (width == 0) {
                 width = mScreenWidth;
             }
 
-            if(width>mScreenWidth){
+            if (width > mScreenWidth) {
                 width = mScreenWidth;
             }
 
@@ -770,25 +1080,24 @@ public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, 
             height = (int) (height * scale + 0.5f);
             if (height == 0) {
                 height = mScreenHeight;
-                height = height - (topMargin+bottomMargin);
+                height = height - (topMargin + bottomMargin);
             }
 
-            if(height>mScreenHeight){
+            if (height > mScreenHeight) {
                 height = mScreenHeight;
-                height = height - (topMargin+bottomMargin);
+                height = height - (topMargin + bottomMargin);
             }
-
 
             int width = options.optInt("width");
             width = (int) (width * scale + 0.5f);
             if (width == 0) {
                 width = mScreenWidth;
-                width = width - (leftMargin+rightMargin);
+                width = width - (leftMargin + rightMargin);
             }
 
-            if(width>mScreenWidth){
+            if (width > mScreenWidth) {
                 width = mScreenWidth;
-                width = width - (leftMargin+rightMargin);
+                width = width - (leftMargin + rightMargin);
             }
 
             String position = options.optString("position");
@@ -824,6 +1133,59 @@ public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, 
             });
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void startDragging(JSONArray args) {
+        try {
+
+            JSONObject options = args.getJSONObject(0);
+            String string = options.optString("view");
+            boolean drag = options.optBoolean("drag");
+
+            if (string != null) {
+                if (string.equalsIgnoreCase("local")) {
+                    if (mLocalView != null) {
+                        startLocalTouchListener(drag);
+                    } else {
+                        reportErrorToJS("local view is not initialize : initLocalView ");
+                    }
+
+                } else if (string.equalsIgnoreCase("remote")) {
+                    if (mRemoteView != null) {
+                        startRemoteTouchListener(drag);
+                    } else {
+                        reportErrorToJS("remote view is not initialize : initRemoteView ");
+                    }
+                } else {
+                    reportErrorToJS("Wrong value : Should be local or remote ");
+                }
+            } else {
+                reportErrorToJS("Wrong JSON : " + options);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void startLocalTouchListener(boolean drag) {
+        if (drag) {
+            mLocalView.setOnTouchListener(new OnDragTouchListener(mLocalView));
+            triggerSuccussJSEvent("startDragging", "startDragging", "dragging started");
+        } else {
+            mLocalView.setOnTouchListener(null);
+            triggerSuccussJSEvent("startDragging", "startDragging", "dragging stopped");
+        }
+    }
+
+    private void startRemoteTouchListener(boolean drag) {
+        if (drag) {
+            mRecyclerView.setOnTouchListener(new OnDragTouchListener(mRemoteView));
+            triggerSuccussJSEvent("startDragging", "startDragging", "dragging started");
+        } else {
+            mRecyclerView.setOnTouchListener(null);
+            triggerSuccussJSEvent("startDragging", "startDragging", "dragging stopped");
+            initRemoteView(remoteArgs);
         }
     }
 
@@ -1230,7 +1592,7 @@ public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, 
         try {
             if (mEnxRoom != null) {
                 JSONObject options = args.getJSONObject(0);
-                String txtMessage = options.getString("message");
+                String txtMessage = options.getString("text");
                 boolean broadcast = options.getBoolean("broadcast");
 
                 mEnxRoom.sendMessage(txtMessage, true, null);
@@ -1547,6 +1909,10 @@ public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, 
         }
         mRemoteView = null;
 
+        if (screenShareView != null) {
+            parent.removeView(screenShareView);
+        }
+
         mLocalStream = null;
         mEnxRoom = null;
         mEnxRtc = null;
@@ -1570,12 +1936,12 @@ public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, 
             enxRoom.setMuteRoomObserver(this);
             enxRoom.setRecordingObserver(this);
             enxRoom.setFileShareObserver(this);
-            // enxRoom.setScreenShareObserver(this);
+            enxRoom.setScreenShareObserver(this);
             enxRoom.setTalkerObserver(this);
             enxRoom.setNetworkChangeObserver(this);
             enxRoom.setReconnectObserver(this);
-            // enxRoom.setCanvasObserver(this);
-            // enxRoom.setAnnotationObserver(this);
+            enxRoom.setCanvasObserver(this);
+            enxRoom.setAnnotationObserver(this);
             enxRoom.setOutBoundCallObserver(this);
             enxRoom.setLockRoomManagementObserver(this);
             enxRoom.publish(mLocalStream);
@@ -1653,8 +2019,10 @@ public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, 
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            mEnxRoom.adjustLayout();
-                            mLocalView.bringToFront();
+                            if (mEnxRoom != null) {
+                                mEnxRoom.adjustLayout();
+                                mLocalView.bringToFront();
+                            }
                         }
                     }, 600);
                 }
@@ -2034,7 +2402,9 @@ public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, 
 
     @Override
     public void onCanvasStarted(EnxStream enxStream) {
-
+        canvasShared = true;
+        this.canvasShareStream = enxStream;
+        triggerSuccussJSEvent("onCanvasStarted", "onCanvasStarted", "Canvas started");
     }
 
     @Override
@@ -2044,7 +2414,8 @@ public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, 
 
     @Override
     public void onCanvasStopped(EnxStream enxStream) {
-
+        canvasShared = false;
+        triggerSuccussJSEvent("onCanvasStopped", "onCanvasStopped", "Canvas stopped");
     }
 
     @Override
@@ -2057,33 +2428,154 @@ public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, 
 
     }
 
+    boolean screenShared;
+    boolean canvasShared;
+    EnxStream screenShareStream;
+    EnxStream canvasShareStream;
+
     @Override
     public void onScreenSharedStarted(EnxStream enxStream) {
-
+        this.screenShared = true;
+        this.screenShareStream = enxStream;
+        triggerSuccussJSEvent("onScreenSharedStarted", "onScreenSharedStarted", "Screen shared started");
     }
 
     @Override
     public void onScreenSharedStopped(EnxStream enxStream) {
-
+        this.screenShared = false;
+        triggerSuccussJSEvent("onScreenSharedStopped", "onScreenSharedStopped", "Screen shared stopped");
     }
 
     @Override
     public void onAnnotationStarted(EnxStream enxStream) {
-
+        triggerSuccussJSEvent("onAnnotationStarted", "onAnnotationStarted", "Annotation started");
     }
 
     @Override
     public void onStartAnnotationAck(JSONObject jsonObject) {
-
+        triggerSuccussJSEvent("onStartAnnotationAck", "onStartAnnotationAck", "Annotation started");
     }
 
     @Override
     public void onAnnotationStopped(EnxStream enxStream) {
-
+        triggerSuccussJSEvent("onAnnotationStopped", "onAnnotationStopped", "Annotation stopped");
     }
 
     @Override
     public void onStoppedAnnotationAck(JSONObject jsonObject) {
+        triggerSuccussJSEvent("onStoppedAnnotationAck", "onStoppedAnnotationAck", "Annotation stopped");
+    }
 
+    private class OnDragTouchListener implements View.OnTouchListener {
+
+        private View mView;
+        private View mParent;
+        private boolean isDragging;
+        private boolean isInitialized = false;
+
+        private int width;
+        private float xWhenAttached;
+        private float maxLeft;
+        private float maxRight;
+        private float dX;
+
+        private int height;
+        private float yWhenAttached;
+        private float maxTop;
+        private float maxBottom;
+        private float dY;
+
+        public OnDragTouchListener(View view) {
+            initListener(view, (View) view.getParent());
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (isDragging) {
+                float[] bounds = new float[4];
+                // LEFT
+                bounds[0] = event.getRawX() - 250 /* + dX */;
+                if (bounds[0] < maxLeft) {
+                    bounds[0] = maxLeft;
+                }
+                // RIGHT
+                bounds[2] = bounds[0] + width;
+                if (bounds[2] > maxRight) {
+                    bounds[2] = maxRight;
+                    bounds[0] = bounds[2] - width;
+                }
+                // TOP
+                bounds[1] = event.getRawY() - 250/* + dY */;
+                if (bounds[1] < maxTop) {
+                    bounds[1] = maxTop;
+                }
+                // BOTTOM
+                bounds[3] = bounds[1] + height;
+                if (bounds[3] > maxBottom) {
+                    bounds[3] = maxBottom;
+                    bounds[1] = bounds[3] - height;
+                }
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_CANCEL:
+                    case MotionEvent.ACTION_UP:
+                        onDragFinish();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        mView.animate().x(bounds[0]).y(bounds[1]).setDuration(0).start();
+                        break;
+                }
+                return true;
+            } else {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        isDragging = true;
+                        if (!isInitialized) {
+                            updateBounds();
+                        }
+                        dX = v.getX() - event.getRawX();
+                        dY = v.getY() - event.getRawY();
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        public void initListener(View view, View parent) {
+            mView = view;
+            mParent = parent;
+            isDragging = false;
+            isInitialized = false;
+        }
+
+        public void updateBounds() {
+            updateViewBounds();
+            updateParentBounds();
+            isInitialized = true;
+        }
+
+        public void updateViewBounds() {
+            width = mView.getWidth();
+            xWhenAttached = mView.getX();
+            dX = 0;
+
+            height = mView.getHeight();
+            yWhenAttached = mView.getY();
+            dY = 0;
+        }
+
+        public void updateParentBounds() {
+            maxLeft = 0;
+            maxRight = maxLeft + mParent.getWidth();
+
+            maxTop = 0;
+            maxBottom = maxTop + mParent.getHeight();
+        }
+
+        private void onDragFinish() {
+            dX = 0;
+            dY = 0;
+            isDragging = false;
+        }
     }
 }
