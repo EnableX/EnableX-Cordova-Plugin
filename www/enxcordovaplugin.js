@@ -791,8 +791,16 @@ var EnxCordovaPlugin = {
   whoAmI: function (successCallback, errorCallback) {
     var options = {};
     exec(successCallback, errorCallback, PLUGIN_NAME, 'whoAmI', [options]);
-  }
-
+  },
+    /**
+    * Dumy Method.
+    * @param nil
+    * @param nil
+    */
+getPrint: function(){
+      var options = {};
+      exec(null, null, PLUGIN_NAME, 'getPrint', [options]);
+    }
 };
 
 module.exports = EnxCordovaPlugin;
