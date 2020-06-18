@@ -2,7 +2,7 @@
 
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     id="enablex-cordova-plugin"
-    version="1.0.3">
+    version="1.0.4">
     <name>EnableX Cordova Plugin</name>
     <description></description>
     <license>MIT</license>

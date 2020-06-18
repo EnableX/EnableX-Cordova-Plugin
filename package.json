@@ -1,6 +1,6 @@
 {
   "name": "enablex-cordova-plugin",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "cordova": {
     "id": "enablex-cordova-plugin",
     "platforms": [
