@@ -14,8 +14,7 @@
     UIView *mRemoteView;
     CGFloat firstX;
     CGFloat firstY;
-
-
+    NSString *roomMode;
 - (void)pluginInitialize {
     [self getPrivacyAccess];
     if(mEnxRtc == nil){
@@ -153,6 +152,183 @@
 -(void)onReceivedHardUnMute:(CDVInvokedUrlCommand*)command{
     [eventListional setObject:command.callbackId forKey:@"onReceivedHardUnMute"];
 }
+-(void)onAcknowledgedSendData:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onAcknowledgedSendData"];
+}
+-(void)onMessageReceived:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onMessageReceived"];
+}
+-(void)onSwitchedUserRole:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onSwitchedUserRole"];
+}
+-(void)onUserRoleChanged:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onUserRoleChanged"];
+}
+-(void)onConferencessExtended:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onConferencessExtended"];
+}
+-(void)onConferenceRemainingDuration:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onConferenceRemainingDuration"];
+}
+-(void)onBandWidthUpdated:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onBandWidthUpdated"];
+}
+-(void)onShareStreamEvent:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onShareStreamEvent"];
+}
+-(void)onCanvasStreamEvent:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onCanvasStreamEvent"];
+}
+-(void)onConnectionInterrupted:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onConnectionInterrupted"];
+}
+-(void)onConnectionLost:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onConnectionLost"];
+}
+-(void)onOutBoundCallInitiated:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onOutBoundCallInitiated"];
+}
+-(void)onDialStateEvents:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onDialStateEvents"];
+}
+-(void)onPlayerStats:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onPlayerStats"];
+}
+-(void)onReconnect:(CDVInvokedUrlCommand*)command{
+   [eventListional setObject:command.callbackId forKey:@"onReconnect"];
+}
+-(void)onUserReconnectSuccess:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onUserReconnectSuccess"];
+}
+-(void)onStartRecordingEvent:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onStartRecordingEvent"];
+}
+-(void)onRoomRecordingOn:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onRoomRecordingOn"];
+}
+-(void)onStopRecordingEvent:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onStopRecordingEvent"];
+}
+-(void)onRoomRecordingOff:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onRoomRecordingOff"];
+}
+-(void)onAcknowledgeStats:(CDVInvokedUrlCommand*)command{
+   [eventListional setObject:command.callbackId forKey:@"onAcknowledgeStats"];
+}
+-(void)onReceivedStats:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onReceivedStats"];
+}
+-(void)onRemoteStreamAudioMute:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onRemoteStreamAudioMute"];
+}
+-(void)onAdvancedOptionsUpdate:(CDVInvokedUrlCommand*)command{
+     [eventListional setObject:command.callbackId forKey:@"onAdvancedOptionsUpdate"];
+}
+-(void)onGetAdvancedOptions:(CDVInvokedUrlCommand*)command{
+     [eventListional setObject:command.callbackId forKey:@"onGetAdvancedOptions"];
+}
+//New
+-(void)onFileUploadStarted:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onFileUploadStarted"];
+}
+-(void)onFileAvailable:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onFileAvailable"];
+}
+-(void)onInitFileUpload:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onInitFileUpload"];
+}
+-(void)onFileUploaded:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onFileUploaded"];
+}
+-(void)onFileUploadCancelled:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onFileUploadCancelled"];
+}
+-(void)onFileUploadFailed:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onFileUploadFailed"];
+}
+-(void)onFileDownloaded:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onFileDownloaded"];
+}
+-(void)onFileDownloadCancelled:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onFileDownloadCancelled"];
+}
+-(void)onFileDownloadFailed:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onFileDownloadFailed"];
+}
+-(void)onInitFileDownload:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onInitFileDownload"];
+}
+-(void)onScreenSharedStarted:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onScreenSharedStarted"];
+}
+-(void)onScreenSharedStopped:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onScreenSharedStopped"];
+}
+-(void)onCanvasStarted:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onCanvasStarted"];
+}
+-(void)onCanvasStopped:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onCanvasStopped"];
+}
+-(void)onAnnotationStarted:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onAnnotationStarted"];
+}
+-(void)onStartAnnotationAck:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onStartAnnotationAck"];
+}
+-(void)onAnnotationStopped:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onAnnotationStopped"];
+}
+-(void)onStoppedAnnotationAck:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onStoppedAnnotationAck"];
+}
+-(void)onRemoteStreamAudioUnMute:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onRemoteStreamAudioUnMute"];
+}
+-(void)onRemoteStreamVideoMute:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onRemoteStreamVideoMute"];
+}
+-(void)onRemoteStreamVideoUnMute:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onRemoteStreamVideoUnMute"];
+}
+-(void)OnCapturedView:(CDVInvokedUrlCommand*)command{
+   [eventListional setObject:command.callbackId forKey:@"OnCapturedView"];
+}
+-(void)onUserDataReceived:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onUserDataReceived"];
+}
+#pragma -mark CC Callback
+-(void)onFloorRequested:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onFloorRequested"];
+}
+-(void)onFloorRequestReceived:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onFloorRequestReceived"];
+}
+-(void)onProcessFloorRequested:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onProcessFloorRequested"];
+}
+-(void)onGrantedFloorRequest:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onGrantedFloorRequest"];
+}
+-(void)onDeniedFloorRequest:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onDeniedFloorRequest"];
+}
+-(void)onReleasedFloorRequest:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onReleasedFloorRequest"];
+}
+-(void)onFloorCancelled:(CDVInvokedUrlCommand*)command{
+   [eventListional setObject:command.callbackId forKey:@"onFloorCancelled"];
+}
+-(void)onFloorFinished:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onFloorFinished"];
+}
+-(void)onCancelledFloorRequest:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"onCancelledFloorRequest"];
+}
+-(void)onFinishedFloorRequest:(CDVInvokedUrlCommand*)command{
+   [eventListional setObject:command.callbackId forKey:@"onFinishedFloorRequest"];
+}
+
 //Check For obj Refrence
 -(void)checkForObjectRef{
     if(mEnxRtc == nil){
@@ -625,7 +801,7 @@
    [eventListional setObject:command.callbackId forKey:@"getMode"];
     if(mEnxRoom != nil){
         //NSString *mode = mEnxRoom.room;
-        [self triggerSuccussJSEvent:@"getMode" actionName:@"getMode" requestData:@"group"];
+        [self triggerSuccussJSEvent:@"getMode" actionName:@"getMode" requestData:roomMode];
     }
     else{
         [self reportErrorToJS:@"Object is not initialize : EnxRoom"];
@@ -1082,6 +1258,283 @@
     }
 }
 
+/*Handover self authority to other user in same room*/
+-(void)switchUserRole:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"switchUserRole"];
+    NSDictionary* argu = [command.arguments objectAtIndex:0];
+    @try {
+        if(argu != nil){
+            if(mEnxRoom != nil){
+                NSString *clientId =argu[@"clientId"];
+                [mEnxRoom switchUserRole:clientId];
+                //[self triggerSuccussJSEvent:@"configuartionOptions" actionName:@"configuartionOptions" requestData:@"Success"];
+            }else{
+               [self reportErrorToJS:@"Object is not initialize : EnxRoom"];
+            }
+        }else{
+           [self reportErrorToJS:[NSString stringWithFormat:@"Wrong JSON  : %@",argu]];
+        }
+    }@catch (NSException *exception) {
+        NSLog(@"%@", [NSString stringWithFormat:@"%@",exception.description]);
+    }
+}
+/*Make out bond call to any numble*/
+-(void)makeOutboundCall:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"makeOutboundCall"];
+    NSDictionary* argu = [command.arguments objectAtIndex:0];
+    @try {
+        if(argu != nil){
+            if(mEnxRoom != nil){
+                NSString *number =argu[@"text"];
+                [mEnxRoom makeOutboundCall:number];
+                //[self triggerSuccussJSEvent:@"configuartionOptions" actionName:@"configuartionOptions" requestData:@"Success"];
+            }else{
+               [self reportErrorToJS:@"Object is not initialize : EnxRoom"];
+            }
+        }else{
+           [self reportErrorToJS:[NSString stringWithFormat:@"Wrong JSON  : %@",argu]];
+        }
+    }@catch (NSException *exception) {
+        NSLog(@"%@", [NSString stringWithFormat:@"%@",exception.description]);
+    }
+}
+/*Send chat message in room*/
+-(void)sendMessage:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"sendMessage"];
+    NSDictionary* argu = [command.arguments objectAtIndex:0];
+    @try {
+        if(argu != nil){
+            if(mEnxRoom != nil){
+                NSString *textMsg =argu[@"text"];
+                BOOL isBroadCase = [argu[@"broadcast"]boolValue];
+                if(!isBroadCase){
+                    if(argu[@"clientIds"] != nil){
+                        NSArray *clientIds = argu[@"clientIds"];
+                        [mEnxRoom sendMessage:textMsg isBroadCast:isBroadCase recipientIDs:clientIds];
+                    }
+                    else{
+                        [self reportErrorToJS:[NSString stringWithFormat:@"Invalid Receipent IDS "]];
+                    }
+                }
+                else{
+                   [mEnxRoom sendMessage:textMsg isBroadCast:isBroadCase recipientIDs:nil];
+                }
+                //[self triggerSuccussJSEvent:@"configuartionOptions" actionName:@"configuartionOptions" requestData:@"Success"];
+            }else{
+               [self reportErrorToJS:@"Object is not initialize : EnxRoom"];
+            }
+        }else{
+           [self reportErrorToJS:[NSString stringWithFormat:@"Wrong JSON  : %@",argu]];
+        }
+    }@catch (NSException *exception) {
+        NSLog(@"%@", [NSString stringWithFormat:@"%@",exception.description]);
+    }
+}
+/*Send any tuype of data in room*/
+-(void)sendUserData:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"sendUserData"];
+    NSDictionary* argu = [command.arguments objectAtIndex:0];
+    @try {
+        if(argu != nil){
+            if(mEnxRoom != nil){
+                NSDictionary *msg =argu[@"message"];
+                BOOL isBroadCase = [argu[@"broadcast"]boolValue];
+                if(!isBroadCase){
+                    if(argu[@"clientIds"] != nil){
+                        NSArray *clientIds = argu[@"clientIds"];
+                        [mEnxRoom sendUserData:msg isBroadCast:isBroadCase recipientIDs:clientIds];
+                    }
+                    else{
+                        [self reportErrorToJS:[NSString stringWithFormat:@"Invalid Receipent IDS "]];
+                    }
+                }
+                else{
+                   [mEnxRoom sendUserData:msg isBroadCast:isBroadCase recipientIDs:nil];
+                }
+                //[self triggerSuccussJSEvent:@"sendUserData" actionName:@"sendUserData" requestData:@"Success"];
+            }else{
+               [self reportErrorToJS:@"Object is not initialize : EnxRoom"];
+            }
+        }else{
+           [self reportErrorToJS:[NSString stringWithFormat:@"Wrong JSON  : %@",argu]];
+        }
+    }@catch (NSException *exception) {
+        NSLog(@"%@", [NSString stringWithFormat:@"%@",exception.description]);
+    }
+}
+/*Set Advance option in room*/
+-(void)setAdvancedOptions:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"setAdvancedOptions"];
+     NSDictionary* argu = [command.arguments objectAtIndex:0];
+     @try {
+         if(argu != nil){
+             if(mEnxRoom != nil){
+                 NSArray *option = argu[@"array"];
+                 [mEnxRoom setAdvanceOptions:option];
+                 //[self triggerSuccussJSEvent:@"setAdvancedOptions" actionName:@"setAdvancedOptions" requestData:@"Success"];
+             }else{
+                [self reportErrorToJS:@"Object is not initialize : EnxRoom"];
+             }
+         }else{
+            [self reportErrorToJS:[NSString stringWithFormat:@"Wrong JSON  : %@",argu]];
+         }
+     }@catch (NSException *exception) {
+         NSLog(@"%@", [NSString stringWithFormat:@"%@",exception.description]);
+     }
+}
+/*Get Advance option in room*/
+-(void)getAdvancedOptions:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"getAdvancedOptions"];
+    if(mEnxRoom != nil){
+        [mEnxRoom getAdvanceOptions];
+        //[self triggerSuccussJSEvent:@"getAdvancedOptions" actionName:@"getAdvancedOptions" requestData:@"Success"];
+    }else{
+       [self reportErrorToJS:@"Object is not initialize : EnxRoom"];
+    }
+}
+/*Send file in same room*/
+-(void)sendFiles:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"sendFiles"];
+    NSDictionary* argu = [command.arguments objectAtIndex:0];
+    @try {
+        if(argu != nil){
+            if(mEnxRoom != nil){
+                BOOL isBroadCase = [argu[@"broadcast"]boolValue];
+                if(!isBroadCase){
+                    if(argu[@"array"] != nil){
+                        NSArray *clientIds = argu[@"array"];
+                        NSMutableArray *clientIdsList =[[NSMutableArray alloc] initWithCapacity:0];
+                        for(NSDictionary *dict in clientIds){
+                            [clientIdsList addObject:dict[@"clientId"]];
+                        }
+                        [mEnxRoom sendFiles:isBroadCase clientIds:clientIdsList];
+                        
+                    }
+                    else{
+                        [self reportErrorToJS:[NSString stringWithFormat:@"Invalid Receipent IDS "]];
+                    }
+                }
+                else{
+                   [mEnxRoom sendFiles:isBroadCase clientIds:nil];
+                }
+                //[self triggerSuccussJSEvent:@"sendUserData" actionName:@"sendUserData" requestData:@"Success"];
+            }else{
+               [self reportErrorToJS:@"Object is not initialize : EnxRoom"];
+            }
+        }else{
+           [self reportErrorToJS:[NSString stringWithFormat:@"Wrong JSON  : %@",argu]];
+        }
+    }@catch (NSException *exception) {
+        NSLog(@"%@", [NSString stringWithFormat:@"%@",exception.description]);
+    }
+}
+/*Download Available file */
+-(void)downloadFile:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"downloadFile"];
+    NSDictionary* argu = [command.arguments objectAtIndex:0];
+    @try {
+        if(argu != nil){
+            if(mEnxRoom != nil){
+                if(argu[@"isAutoSave"] != nil && argu[@"json"] != nil){
+                    BOOL autoSave = [argu[@"isAutoSave"] boolValue];
+                    NSDictionary*dict = argu[@"json"];
+                    [mEnxRoom downloadFile:dict autoSave:autoSave];
+                }
+                else{
+                    [self reportErrorToJS:[NSString stringWithFormat:@"Invalid input Argument"]];
+                }
+                //[self triggerSuccussJSEvent:@"sendUserData" actionName:@"sendUserData" requestData:@"Success"];
+            }else{
+               [self reportErrorToJS:@"Object is not initialize : EnxRoom"];
+            }
+        }else{
+           [self reportErrorToJS:[NSString stringWithFormat:@"Wrong JSON  : %@",argu]];
+        }
+    }@catch (NSException *exception) {
+        NSLog(@"%@", [NSString stringWithFormat:@"%@",exception.description]);
+    }
+}
+/*CAncel upload file in room*/
+-(void)cancelUpload:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"cancelUpload"];
+    NSDictionary* argu = [command.arguments objectAtIndex:0];
+    @try {
+        if(argu != nil){
+            if(mEnxRoom != nil){
+                if(argu[@"jobId"] != nil){
+                    int jobId = [argu[@"jobId"] intValue];
+                    [mEnxRoom cancelUpload:jobId];
+                }
+                else{
+                    [self reportErrorToJS:[NSString stringWithFormat:@"Invalid input Argument"]];
+                }
+                //[self triggerSuccussJSEvent:@"sendUserData" actionName:@"sendUserData" requestData:@"Success"];
+            }else{
+               [self reportErrorToJS:@"Object is not initialize : EnxRoom"];
+            }
+        }else{
+           [self reportErrorToJS:[NSString stringWithFormat:@"Wrong JSON  : %@",argu]];
+        }
+    }@catch (NSException *exception) {
+        NSLog(@"%@", [NSString stringWithFormat:@"%@",exception.description]);
+    }
+}
+/*cancle Download files in room*/
+-(void)cancelDownload:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"cancelDownload"];
+    NSDictionary* argu = [command.arguments objectAtIndex:0];
+    @try {
+        if(argu != nil){
+            if(mEnxRoom != nil){
+                if(argu[@"jobId"] != nil){
+                    int jobId = [argu[@"jobId"] intValue];
+                    [mEnxRoom cancelDownload:jobId];
+                }
+                else{
+                    [self reportErrorToJS:[NSString stringWithFormat:@"Invalid input Argument"]];
+                }
+                //[self triggerSuccussJSEvent:@"sendUserData" actionName:@"sendUserData" requestData:@"Success"];
+            }else{
+               [self reportErrorToJS:@"Object is not initialize : EnxRoom"];
+            }
+        }else{
+           [self reportErrorToJS:[NSString stringWithFormat:@"Wrong JSON  : %@",argu]];
+        }
+    }@catch (NSException *exception) {
+        NSLog(@"%@", [NSString stringWithFormat:@"%@",exception.description]);
+    }
+}
+/*Cancel All Upload file in room*/
+-(void)cancelAllUploads:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"cancelAllUploads"];
+    if(mEnxRoom != nil){
+        [mEnxRoom cancelAllUploads];
+        //[self triggerSuccussJSEvent:@"getAdvancedOptions" actionName:@"getAdvancedOptions" requestData:@"Success"];
+    }else{
+       [self reportErrorToJS:@"Object is not initialize : EnxRoom"];
+    }
+}
+/*Cancel All Download file in room*/
+-(void)cancelAllDownloads:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"cancelAllUploads"];
+    if(mEnxRoom != nil){
+        [mEnxRoom cancelAllDownloads];
+        //[self triggerSuccussJSEvent:@"getAdvancedOptions" actionName:@"getAdvancedOptions" requestData:@"Success"];
+    }else{
+       [self reportErrorToJS:@"Object is not initialize : EnxRoom"];
+    }
+}
+/*Get list of available files in room*/
+-(void)getAvailableFiles:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"getAvailableFiles"];
+    if(mEnxRoom != nil){
+       NSArray *fileList =  [mEnxRoom getAvailableFiles];
+        [self triggerSuccussJSEvent:@"getAvailableFiles" actionName:@"getAvailableFiles" requestData:fileList];
+    }else{
+       [self reportErrorToJS:@"Object is not initialize : EnxRoom"];
+    }
+}
+
 #pragma -mark Chair Controller Methods
 /*This method for participent, Where he/she request for floor access*/
 -(void)requestFloor:(CDVInvokedUrlCommand*)command{
@@ -1180,6 +1633,8 @@
 /*Room Join call back*/
 -(void)room:(EnxRoom *)room didConnect:(NSDictionary *)roomMetadata{
     mEnxRoom = room;
+    NSDictionary *roomSettingInfo = roomMetadata[@"room"][@"settings"];
+    roomMode = roomSettingInfo[@"mode"];
     if(mEnxRoom != nil){
         [mEnxRoom publish:mLocalStream];
     }
@@ -1337,7 +1792,254 @@ Get Max Talker Count In room
 - (void)didRecievedHardUnmutedAudio:(NSArray *_Nullable)Data{
     [self triggerSuccussJSEvent:@"onReceivedHardUnMuteAudio" actionName:@"onReceivedHardUnMuteAudio" requestData:Data[0]];
 }
+
+- (void)room:(EnxRoom *_Nullable)room didAcknowledgSendData:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onAcknowledgedSendData" actionName:@"onAcknowledgedSendData" requestData:data[0]];
+}
+/*
+ This delegate method called to receive message at room Level.
+ */
+- (void)room:(EnxRoom *_Nonnull)room didMessageReceived:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onMessageReceived" actionName:@"onMessageReceived" requestData:data[0]];
+}
+/*
+ This delegate method called to receive custom signaling event message at room Level.
+ */
+- (void)room:(EnxRoom *_Nonnull)room didUserDataReceived:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onUserDataReceived" actionName:@"onUserDataReceived" requestData:data[0]];
+}
+- (void)room:(EnxRoom *_Nullable)room didSwitchUserRole:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onSwitchedUserRole" actionName:@"onSwitchedUserRole" requestData:data[0]];
+}
+
+- (void)room:(EnxRoom *_Nullable)room didUserRoleChanged:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onUserRoleChanged" actionName:@"onUserRoleChanged" requestData:data[0]];
+}
+/*
+ Confrence Time Alert
+ */
+- (void)room:(EnxRoom *_Nullable)room didConferenceRemainingDuration:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onConferenceRemainingDuration" actionName:@"onConferenceRemainingDuration" requestData:data[0]];
+}
+/* Extend Confrence callback*/
+- (void)room:(EnxRoom *_Nullable)room didConferencessExtended:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onConferencessExtended" actionName:@"onConferencessExtended" requestData:data[0]];
+}
+- (void)room:(EnxRoom *_Nullable)room didReceiveData:(NSDictionary *_Nullable)data
+  fromStream:(EnxStream *_Nullable)stream{
+     [self triggerSuccussJSEvent:@"onReceivedData" actionName:@"onReceivedData" requestData:data];
+}
+- (void)room:(EnxRoom *_Nullable)room didAcknowledgementAdvanceOption:(NSDictionary *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onAdvancedOptionsUpdate" actionName:@"onAdvancedOptionsUpdate" requestData:data];
+}
+
+- (void)room:(EnxRoom *_Nullable)room didBatteryUpdates:(NSDictionary *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onAdvancedOptionsUpdate" actionName:@"onAdvancedOptionsUpdate" requestData:data];
+}
+
+- (void)room:(EnxRoom *_Nullable)room didAspectRatioUpdates:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onAdvancedOptionsUpdate" actionName:@"onAdvancedOptionsUpdate" requestData:data[0]];
+}
+
+- (void)room:(EnxRoom *_Nullable)room didVideoResolutionUpdates:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onAdvancedOptionsUpdate" actionName:@"onAdvancedOptionsUpdate" requestData:data[0]];
+}
+
+- (void)room:(EnxRoom *_Nullable)room didGetAdvanceOptions:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onGetAdvancedOptions" actionName:@"onGetAdvancedOptions" requestData:data[0]];
+}
+- (void)room:(EnxRoom *_Nullable)room didBandWidthUpdated:(NSArray *_Nullable)data{
+     [self triggerSuccussJSEvent:@"onBandWidthUpdated" actionName:@"onBandWidthUpdated" requestData:data[0]];
+}
+- (void)room:(EnxRoom *_Nullable)room didCanvasStreamEvent:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onCanvasStreamEvent" actionName:@"onCanvasStreamEvent" requestData:data[0]];
+}
+- (void)room:(EnxRoom *_Nullable)room didShareStreamEvent:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onShareStreamEvent" actionName:@"onShareStreamEvent" requestData:data[0]];
+}
+-(void)room:(EnxRoom*_Nonnull)room didConnectionInterrupted:(NSArray*_Nonnull)data{
+     [self triggerSuccussJSEvent:@"onConnectionInterrupted" actionName:@"onConnectionInterrupted" requestData:data[0]];
+}
+-(void)room:(EnxRoom*_Nonnull)room didConnectionLost:(NSArray*_Nonnull)data{
+     [self triggerSuccussJSEvent:@"onConnectionLost" actionName:@"onConnectionLost" requestData:data[0]];
+}
+- (void)room:(EnxRoom *_Nullable)room didOutBoundCallInitiated:(NSArray *_Nullable)data{
+     [self triggerSuccussJSEvent:@"onOutBoundCallInitiated" actionName:@"onOutBoundCallInitiated" requestData:data[0]];
+}
+- (void)room:(EnxRoom *_Nullable)room didDialStateEvents:(EnxOutBoundCallState)state{
+    // [self triggerSuccussJSEvent:@"onDialStateEvents" actionName:@"onDialStateEvents" requestData:state];
+}
+-(void)didPlayerStats:(NSDictionary * _Nonnull)data{
+     [self triggerSuccussJSEvent:@"onPlayerStats" actionName:@"onPlayerStats" requestData:data];
+}
+- (void)room:(EnxRoom *_Nullable)room didReconnect:(NSString *_Nullable)reason{
+     [self triggerSuccussJSEvent:@"onReconnect" actionName:@"onReconnect" requestData:reason];
+}
+-(void)room:(EnxRoom*_Nonnull)room didUserReconnectSuccess:(NSDictionary*_Nonnull)data{
+   [self triggerSuccussJSEvent:@"onUserReconnectSuccess" actionName:@"onUserReconnectSuccess" requestData:data];
+}
+-(void)startRecordingEvent:(NSArray *_Nullable)response{
+     [self triggerSuccussJSEvent:@"onStartRecordingEvent" actionName:@"onStartRecordingEvent" requestData:response[0]];
+}
+-(void)stopRecordingEvent:(NSArray *_Nullable)response{
+     [self triggerSuccussJSEvent:@"onStopRecordingEvent" actionName:@"onStopRecordingEvent" requestData:response[0]];
+}
+-(void)roomRecordOn:(NSArray *_Nullable)Data{
+     [self triggerSuccussJSEvent:@"onRoomRecordingOn" actionName:@"onRoomRecordingOn" requestData:Data[0]];
+}
+-(void)roomRecordOff:(NSArray *_Nullable)Data{
+     [self triggerSuccussJSEvent:@"onRoomRecordingOff" actionName:@"onRoomRecordingOff" requestData:Data[0]];
+}
+/*
+    This method will update once stats enable and update to app user for stats
+    @param statsData has all stats information.
+ */
+-(void)didReceiveStats:(NSArray * _Nonnull)statsData{
+     [self triggerSuccussJSEvent:@"onReceivedStats" actionName:@"onReceivedStats" requestData:statsData[0]];
+}
+/*
+ This method will update  stats Subscribe and UnSubscribe
+ @param statsData has all stats information.
+ */
+-(void)didAcknowledgeStats:(NSArray * _Nonnull)subUnSubResponse{
+     [self triggerSuccussJSEvent:@"onAcknowledgeStats" actionName:@"onAcknowledgeStats" requestData:subUnSubResponse[0]];
+}
+- (void)stream:(EnxStream *_Nullable)stream didRemoteStreamAudioMute:(NSArray *_Nullable)data{
+     [self triggerSuccussJSEvent:@"onRemoteStreamAudioMute" actionName:@"onRemoteStreamAudioMute" requestData:data[0]];
+}
+
+//New 
+/*This delegate method called When any of the user in same room will start sharing file.*/
+- (void)room:(EnxRoom *_Nonnull)room
+didFileUploadStarted:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onFileUploadStarted" actionName:@"onFileUploadStarted" requestData:data[0]];
+}
+/*This delegate method called When self user will start sharing file.*/
+- (void)room:(EnxRoom *_Nonnull)room
+didInitFileUpload:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onInitFileUpload" actionName:@"onInitFileUpload" requestData:data[0]];
+}
+/*This delegate method called When File available to download.*/
+- (void)room:(EnxRoom *_Nonnull)room
+didFileAvailable:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onFileAvailable" actionName:@"onFileAvailable" requestData:data[0]];
+}
+/*This delegate method called upload file is success.*/
+- (void)room:(EnxRoom *_Nonnull)room
+didFileUploaded:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onFileUploaded" actionName:@"onFileUploaded" requestData:data[0]];
+}
+/*This delegate method called upload file is failed.*/
+- (void)room:(EnxRoom *_Nonnull)room
+didFileUploadFailed:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onFileUploadFailed" actionName:@"onFileUploadFailed" requestData:data[0]];
+}
+/*This delegate method called When download of file success.*/
+- (void)room:(EnxRoom *_Nonnull)room
+didFileDownloaded:(NSString *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onFileDownloaded" actionName:@"onFileDownloaded" requestData:data];
+}
+/*This delegate method called When file download failed.*/
+- (void)room:(EnxRoom *_Nonnull)room
+didFileDownloadFailed:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onFileDownloadFailed" actionName:@"onFileDownloadFailed" requestData:data[0]];
+}
+/*This delegate method called When file download initiated.*/
+- (void)room:(EnxRoom *_Nonnull)room
+didInitFileDownload:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onInitFileDownload" actionName:@"onInitFileDownload" requestData:data[0]];
+}
+/*This delegate method called When file download Cancel.*/
+- (void)room:(EnxRoom *_Nonnull)room
+didFileDownloadCancelled:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onFileDownloadCancelled" actionName:@"onFileDownloadCancelled" requestData:data[0]];
+}
+/*This delegate method called When file Upload Cancel.*/
+- (void)room:(EnxRoom *_Nonnull)room
+didFileUploadCancelled:(NSArray *_Nullable)data{
+   [self triggerSuccussJSEvent:@"onFileUploadCancelled" actionName:@"onFileUploadCancelled" requestData:data[0]];
+}
+-(void)room:(EnxRoom *_Nullable)room screenSharedStarted:(NSArray *_Nullable)Data{
+    [self triggerSuccussJSEvent:@"onScreenSharedStarted" actionName:@"onScreenSharedStarted" requestData:Data[0]];
+}
+-(void)room:(EnxRoom *_Nullable)room screenShareStopped:(NSArray *_Nullable)Data{
+    [self triggerSuccussJSEvent:@"onScreenSharedStopped" actionName:@"onScreenSharedStopped" requestData:Data[0]];
+}
+-(void)room:(EnxRoom *_Nullable)room canvasStarted:(NSArray *_Nullable)Data{
+    [self triggerSuccussJSEvent:@"onCanvasStarted" actionName:@"onCanvasStarted" requestData:Data[0]];
+}
+-(void)room:(EnxRoom *_Nullable)room canvasStopped:(NSArray *_Nullable)Data{
+    [self triggerSuccussJSEvent:@"onCanvasStopped" actionName:@"onCanvasStopped" requestData:Data[0]];
+}
+-(void)room:(EnxRoom *_Nullable)room didAnnotationStarted:(NSArray *_Nullable)Data{
+    [self triggerSuccussJSEvent:@"onAnnotationStarted" actionName:@"onAnnotationStarted" requestData:Data[0]];
+}
+-(void)room:(EnxRoom *_Nullable)room didAnnotationStopped:(NSArray *_Nullable)Data{
+    [self triggerSuccussJSEvent:@"onAnnotationStopped" actionName:@"onAnnotationStopped" requestData:Data[0]];
+}
+-(void)room:(EnxRoom *_Nullable)room didStartAnnotationACK:(NSArray *_Nullable)Data{
+    [self triggerSuccussJSEvent:@"onStartAnnotationAck" actionName:@"onStartAnnotationAck" requestData:Data[0]];
+}
+-(void)room:(EnxRoom *_Nullable)room didStoppedAnnotationACK:(NSArray *_Nullable)Data{
+    [self triggerSuccussJSEvent:@"onStoppedAnnotationAck" actionName:@"onStoppedAnnotationAck" requestData:Data[0]];
+}
+-(void)room:(EnxRoom *_Nullable)room didStartCanvasACK:(NSArray *_Nullable)Data{
+    //TO Do
+}
+-(void)room:(EnxRoom *_Nullable)room didStoppedCanvasACK:(NSArray *_Nullable)Data{
+    //TO Do
+}
+// called when error on event failure like publish, subscribe etc
+- (void)room:(EnxRoom *_Nullable)room didEventError:(NSArray *_Nullable)reason{
+    [self triggerErrorJSEvent:@"onEventError" actionName:@"onEventError" requestData:reason[0]];
+}
+// called pass info related to any event if required.
+- (void)room:(EnxRoom *_Nullable)room didEventInfo:(NSDictionary *_Nullable)infoData{
+    [self triggerErrorJSEvent:@"onEventInfo" actionName:@"onEventInfo" requestData:infoData];
+}
+- (void)stream:(EnxStream *_Nullable)stream didRemoteStreamVideoMute:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onRemoteStreamVideoMute" actionName:@"onRemoteStreamVideoMute" requestData:data[0]];
+}
+- (void)stream:(EnxStream *_Nullable)stream didRemoteStreamVideoUnMute:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onRemoteStreamVideoUnMute" actionName:@"onRemoteStreamVideoUnMute" requestData:data[0]];
+}
+- (void)stream:(EnxStream *_Nullable)stream didRemoteStreamAudioUnMute:(NSArray *_Nullable)data{
+    [self triggerSuccussJSEvent:@"onRemoteStreamAudioUnMute" actionName:@"onRemoteStreamAudioUnMute" requestData:data[0]];
+}
+-(void)didCapturedView:(UIImage*_Nonnull)snapShot{
+    //TO Do
+}
 #pragma -mark Callback Methods for Chair controler
+- (void)didFloorRequested:(NSArray *_Nullable)Data{
+    [self triggerSuccussJSEvent:@"onFloorRequested" actionName:@"onFloorRequested" requestData:Data[0]];
+}
+- (void)didFloorCancelled:(NSArray *_Nullable)Data{
+    [self triggerSuccussJSEvent:@"onFloorCancelled" actionName:@"onFloorCancelled" requestData:Data[0]];
+}
+- (void)didFloorFinished:(NSArray *_Nullable)Data{
+    [self triggerSuccussJSEvent:@"onFloorFinished" actionName:@"onFloorFinished" requestData:Data[0]];
+}
+- (void)didGrantedFloorRequest:(NSArray *_Nullable)Data{
+    [self triggerSuccussJSEvent:@"onGrantedFloorRequest" actionName:@"onGrantedFloorRequest" requestData:Data[0]];
+}
+- (void)didDeniedFloorRequest:(NSArray *_Nullable)Data{
+    [self triggerSuccussJSEvent:@"onDeniedFloorRequest" actionName:@"onDeniedFloorRequest" requestData:Data[0]];
+}
+- (void)didReleasedFloorRequest:(NSArray *_Nullable)Data{
+    [self triggerSuccussJSEvent:@"onReleasedFloorRequest" actionName:@"onReleasedFloorRequest" requestData:Data[0]];
+}
+- (void)didCancelledFloorRequest:(NSArray *_Nullable)Data{
+    [self triggerSuccussJSEvent:@"onCancelledFloorRequest" actionName:@"onCancelledFloorRequest" requestData:Data[0]];
+}
+- (void)didFinishedFloorRequest:(NSArray *_Nullable)Data{
+    [self triggerSuccussJSEvent:@"onFinishedFloorRequest" actionName:@"onFinishedFloorRequest" requestData:Data[0]];
+}
+- (void)didFloorRequestReceived:(NSArray *_Nullable)Data{
+    [self triggerSuccussJSEvent:@"onFloorRequestReceived" actionName:@"onFloorRequestReceived" requestData:Data[0]];
+}
+- (void)didProcessFloorRequested:(NSArray *_Nullable)Data{
+    [self triggerSuccussJSEvent:@"onProcessFloorRequested" actionName:@"onProcessFloorRequested" requestData:Data[0]];
+}
 
 #pragma -mark Common Methods
 /*Common method for All events*/

@@ -105,7 +105,7 @@ var EnxCordovaPlugin = {
    * @param {CallableFunction} successCallback 
    * @param {CallableFunction} errorCallback 
    */
-  startDragging: function (view,drag,successCallback, errorCallback) {
+  startDragging: function (view, drag, successCallback, errorCallback) {
     var options = {};
     options.view = view;
     options.drag = drag;
@@ -146,7 +146,7 @@ var EnxCordovaPlugin = {
   hideScreenShareView: function (hide, successCallback, errorCallback) {
     var options = {};
     options.hide = hide;
-    exec(successCallback, errorCallback, PLUGIN_NAME, 'hideSelfView', [options]);
+    exec(successCallback, errorCallback, PLUGIN_NAME, 'hideScreenShareView', [options]);
   },
 
   /**
@@ -156,10 +156,10 @@ var EnxCordovaPlugin = {
    * @param {CallableFunction} errorCallback 
    */
   hideCanvasScreen: function (hide, successCallback, errorCallback) {
-      var options = {};
-      options.hide = hide;
-      exec(successCallback, errorCallback, PLUGIN_NAME, 'hideSelfView', [options]);
-    },
+    var options = {};
+    options.hide = hide;
+    exec(successCallback, errorCallback, PLUGIN_NAME, 'hideCanvasScreen', [options]);
+  },
 
 
   /**
@@ -792,15 +792,26 @@ var EnxCordovaPlugin = {
     var options = {};
     exec(successCallback, errorCallback, PLUGIN_NAME, 'whoAmI', [options]);
   },
-    /**
-    * Dumy Method.
-    * @param nil
-    * @param nil
-    */
-getPrint: function(){
-      var options = {};
-      exec(null, null, PLUGIN_NAME, 'getPrint', [options]);
-    }
+
+  startAnnotation: function (clientid) {
+    var options = {};
+    options.clientId = clientid;
+    exec(null, null, PLUGIN_NAME, 'startAnnotation', [options]);
+  },
+
+  stopAnnotations: function () {
+    var options = {};
+    exec(null, null, PLUGIN_NAME, 'stopAnnotations', [options]);
+  },
+  /**
+  * Dumy Method.
+  * @param nil
+  * @param nil
+  */
+  getPrint: function () {
+    var options = {};
+    exec(null, null, PLUGIN_NAME, 'getPrint', [options]);
+  }
 };
 
 module.exports = EnxCordovaPlugin;

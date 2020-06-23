@@ -18,5 +18,5 @@ allprojects {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.enxrtc:Enx-Rtc-Android:1.5.6'
+    implementation 'com.enxrtc:Enx-Rtc-Android:1.6.0'
 } 
