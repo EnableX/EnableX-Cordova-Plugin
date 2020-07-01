@@ -1257,7 +1257,15 @@ public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, 
     private void getDevices() {
         if (mEnxRoom != null) {
             List<String> deviceList = mEnxRoom.getDevices();
-            triggerSuccussJSEvent("getDevices", "getDevices", deviceList);
+            try{
+                JSONArray jsonArray = new JSONArray();
+                for (int i = 0; i < deviceList.size(); i++) {
+                    jsonArray.put(deviceList.get(i));
+                }
+                triggerSuccussJSEvent("getDevices", "getDevices", jsonArray);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         } else {
             reportErrorToJS("Object is not initialize : EnxRoom");
         }
@@ -1873,8 +1881,8 @@ public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, 
                 JSONObject options = args.getJSONObject(0);
                 boolean status = options.getBoolean("status");
 
-                // mEnxRoom.enableProximitySensor(status);
-                // triggerSuccussJSEvent("enableProximitySensor","enableProximitySensor",status);
+                mEnxRoom.enableProximitySensor(status);
+                triggerSuccussJSEvent("enableProximitySensor","enableProximitySensor",status);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -2215,7 +2223,17 @@ public class EnxCordovaPlugin extends CordovaPlugin implements EnxRoomObserver, 
 
     @Override
     public void OnCapturedView(Bitmap bitmap) {
+        try{
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+            byte[] byteArray = byteArrayOutputStream .toByteArray();
 
+            String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+            triggerSuccussJSEvent("OnCapturedView","OnCapturedView",encoded);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -12,6 +12,10 @@
     float scale;
     UIView * parentView;
     UIView *mRemoteView;
+    UIView *mOptionView;
+    EnxStream *mOptionStream;
+    EnxPlayerView *mOptionPlayer;
+
     CGFloat firstX;
     CGFloat firstY;
     NSString *roomMode;
@@ -339,14 +343,15 @@
         eventListional = [[NSMutableDictionary alloc]initWithCapacity:0];
     }
 }
-
 ///Join Room Events
--(void)joinRoom:(CDVInvokedUrlCommand*)command{
-    [self checkForObjectRef];
-  NSDictionary* phrase = [command.arguments objectAtIndex:0];
-    mLocalStream = [mEnxRtc joinRoom:phrase[@"token"] delegate:self PublishStreamInfo:phrase[@"publishStreamInfo"] roomInfo:phrase[@"roomInfo"] advanceOptions:nil];
+    -(void)joinRoom:(CDVInvokedUrlCommand*)command{
+        [self checkForObjectRef];
+        NSDictionary* phrase = [command.arguments objectAtIndex:0];
+        NSMutableDictionary *roomDict = [phrase[@"roomInfo"] mutableCopy];
+        [roomDict setObject:@"list" forKey:@"activeviews"];
+         mLocalStream = [mEnxRtc joinRoom:phrase[@"token"] delegate:self PublishStreamInfo:phrase[@"publishStreamInfo"] roomInfo:roomDict advanceOptions:nil];
         mLocalStream.delegate = self;
-}
+    }
 
 //Create LocalView
 -(void)initLocalView:(CDVInvokedUrlCommand*)command{
@@ -500,60 +505,77 @@
     if([position isEqualToString:@"right"] ){
               [mRemoteView.topAnchor constraintEqualToAnchor:parentView.topAnchor constant:topMargin].active = true;
               [mRemoteView.trailingAnchor constraintEqualToAnchor:parentView.trailingAnchor constant:-(rightMargin)].active = true;
-            leftMargin = parentView.bounds.size.width - width;
+                if(leftMargin == 0){
+                    leftMargin = parentView.bounds.size.width - width;
+                }
             [mRemoteView.leadingAnchor constraintEqualToAnchor:parentView.leadingAnchor constant:leftMargin].active = true;
-            bottomMargin = parentView.bounds.size.height - height;
+            if(bottomMargin == 0){
+                bottomMargin = parentView.bounds.size.height - height;
+            }
         [mRemoteView.bottomAnchor constraintEqualToAnchor:parentView.bottomAnchor constant:-(bottomMargin)].active = true;
           }
           else if([position isEqualToString:@"left"] ){
               [mRemoteView.topAnchor constraintEqualToAnchor:parentView.topAnchor constant:topMargin].active = true;
               [mRemoteView.leadingAnchor constraintEqualToAnchor:parentView.leadingAnchor constant:leftMargin].active = true;
-              bottomMargin = parentView.bounds.size.height - height;
+              if(bottomMargin == 0){
+                  bottomMargin = parentView.bounds.size.height - height;
+              }
               [mRemoteView.bottomAnchor constraintEqualToAnchor:parentView.bottomAnchor constant:-(bottomMargin)].active = true;
-              rightMargin = parentView.bounds.size.width - width;
+              if(rightMargin == 0){
+                  rightMargin = parentView.bounds.size.width - width;
+              }
               [mRemoteView.trailingAnchor constraintEqualToAnchor:parentView.trailingAnchor constant:-(rightMargin)].active = true;
           }
           else if([position isEqualToString:@"top"] ){
               [mRemoteView.topAnchor constraintEqualToAnchor:parentView.topAnchor constant:topMargin].active = true;
               [mRemoteView.trailingAnchor constraintEqualToAnchor:parentView.trailingAnchor constant:-(rightMargin)].active = true;
-              bottomMargin = parentView.bounds.size.height - height;
+              if(bottomMargin == 0){
+                  bottomMargin = parentView.bounds.size.height - height;
+              }
               [mRemoteView.bottomAnchor constraintEqualToAnchor:parentView.bottomAnchor constant:-(bottomMargin)].active = true;
-              leftMargin = parentView.bounds.size.width - width;
+              if(leftMargin == 0){
+                  leftMargin = parentView.bounds.size.width - width;
+              }
               [mRemoteView.leadingAnchor constraintEqualToAnchor:parentView.leadingAnchor constant:leftMargin].active = true;
           }
           else if([position isEqualToString:@"bottom"] ){
               [mRemoteView.bottomAnchor constraintEqualToAnchor:parentView.bottomAnchor constant:-(bottomMargin)].active = true;
               [mRemoteView.trailingAnchor constraintEqualToAnchor:parentView.trailingAnchor constant:-(rightMargin)].active = true;
-              topMargin = parentView.bounds.size.height - height;
+              if(topMargin == 0){
+                  topMargin = parentView.bounds.size.height - height;
+              }
               [mRemoteView.topAnchor constraintEqualToAnchor:parentView.topAnchor constant:topMargin].active = true;
-              leftMargin = parentView.bounds.size.width - width;
+              if(leftMargin == 0){
+                 leftMargin = parentView.bounds.size.width - width;
+              }
                [mRemoteView.leadingAnchor constraintEqualToAnchor:parentView.leadingAnchor constant:leftMargin].active = true;
           }
 }
--(void)resizeViewRemoteConstant:(UIView*)view{
-    for(UIView *subview in view.subviews){
-        if([subview isKindOfClass:[UILabel class]]){
-            [self removeOldConstant:subview];
-            subview.translatesAutoresizingMaskIntoConstraints = false;
-            [subview.centerXAnchor constraintEqualToAnchor:subview.superview.centerXAnchor].active = YES;
-            [subview.centerYAnchor constraintEqualToAnchor:subview.superview.centerYAnchor].active = YES;
-            [view setNeedsLayout];
-        }
-        if([subview isKindOfClass:[UICollectionView class]]){
-            [self removeOldConstant:subview];
-        }
-    }
-}
--(void)removeOldConstant:(UIView*)view
-{
-    [view.superview.constraints enumerateObjectsUsingBlock:^(__kindof NSLayoutConstraint * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        NSLayoutConstraint *constraint = (NSLayoutConstraint *)obj;
-        if (constraint.firstItem == view || constraint.secondItem == view) {
-                [view.superview removeConstraint:constraint];
-        }
-    }];
-    [view removeConstraints:view.constraints];
-}
+
+// -(void)resizeViewRemoteConstant:(UIView*)view{
+//     for(UIView *subview in view.subviews){
+//         if([subview isKindOfClass:[UILabel class]]){
+//             [self removeOldConstant:subview];
+//             subview.translatesAutoresizingMaskIntoConstraints = false;
+//             [subview.centerXAnchor constraintEqualToAnchor:subview.superview.centerXAnchor].active = YES;
+//             [subview.centerYAnchor constraintEqualToAnchor:subview.superview.centerYAnchor].active = YES;
+//             [view setNeedsLayout];
+//         }
+//         if([subview isKindOfClass:[UICollectionView class]]){
+//             [self removeOldConstant:subview];
+//         }
+//     }
+// }
+// -(void)removeOldConstant:(UIView*)view
+// {
+//     [view.superview.constraints enumerateObjectsUsingBlock:^(__kindof NSLayoutConstraint * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//         NSLayoutConstraint *constraint = (NSLayoutConstraint *)obj;
+//         if (constraint.firstItem == view || constraint.secondItem == view) {
+//                 [view.superview removeConstraint:constraint];
+//         }
+//     }];
+//     [view removeConstraints:view.constraints];
+// }
     /*Disconnect Method*/
 -(void)disconnect:(CDVInvokedUrlCommand*)command{
     if(mEnxRoom != nil){
@@ -840,6 +862,7 @@
                 if([str isEqualToString:@"local"]){
                     if(mlocalView != nil){
                         [self startLocalTouchListener:flag];
+                        [parentView bringSubviewToFront:mlocalView];
                     }
                     else{
                        [self reportErrorToJS:@"local view is not initialize : initLocalView "];
@@ -848,6 +871,7 @@
                 else{
                     if(mRemoteView != nil){
                         [self startRemoteTouchListener:flag];
+                        [parentView bringSubviewToFront:mRemoteView];
                     }
                     else{
                        [self reportErrorToJS:@"remote view is not initialize : initRemoteView"];
@@ -927,8 +951,8 @@
     @try {
         //To Do
             BOOL flag = [argu[@"hide"] boolValue];
-            //mRemoteView.hidden = flag;
-            //[self triggerSuccussJSEvent:@"hideScreenShareView" actionName:@"hideScreenShareView" requestData:@"Success"];
+            mOptionView.hidden = flag;
+            [self triggerSuccussJSEvent:@"hideScreenShareView" actionName:@"hideScreenShareView" requestData:@"Success"];
     }@catch (NSException *exception) {
         NSLog(@"%@", [NSString stringWithFormat:@"%@",exception.description]);
     }
@@ -940,8 +964,8 @@
     @try {
         //To Do
             BOOL flag = [argu[@"hide"] boolValue];
-            //mRemoteView.hidden = flag;
-           // [self triggerSuccussJSEvent:@"hideCanvasScreen" actionName:@"hideCanvasScreen" requestData:@"Success"];
+           mOptionView.hidden = flag;
+            [self triggerSuccussJSEvent:@"hideCanvasScreen" actionName:@"hideCanvasScreen" requestData:@"Success"];
     }@catch (NSException *exception) {
         NSLog(@"%@", [NSString stringWithFormat:@"%@",exception.description]);
     }
@@ -1534,7 +1558,215 @@
        [self reportErrorToJS:@"Object is not initialize : EnxRoom"];
     }
 }
+/*Handle Screen when screen share started*/
+-(void)addScreenShare:(CDVInvokedUrlCommand*)command{
+    //TO Do
+    [eventListional setObject:command.callbackId forKey:@"addScreenShare"];
+    @try {
+        NSLog(@"ParentView %@",parentView);
+         NSDictionary* phrase = [command.arguments objectAtIndex:0];
+        if(phrase[@"viewOptions"] != nil){
+            [self createOptionView:phrase[@"viewOptions"]];
+            [self triggerSuccussJSEvent:@"addScreenShare" actionName:@"addScreenShare" requestData:@"Success"];
 
+        }
+    }@catch (NSException *exception) {
+        NSLog(@"%@", [NSString stringWithFormat:@"%@",exception.description]);
+    }
+}
+/*Handle Screen when Canvas started*/
+-(void)addCanvasScreen:(CDVInvokedUrlCommand*)command{
+    //TO Do
+    [eventListional setObject:command.callbackId forKey:@"addCanvasScreen"];
+    @try {
+        NSLog(@"ParentView %@",parentView);
+         NSDictionary* phrase = [command.arguments objectAtIndex:0];
+        if(phrase[@"viewOptions"] != nil){
+            [self createOptionView:phrase[@"viewOptions"]];
+            [self triggerSuccussJSEvent:@"addCanvasScreen" actionName:@"addCanvasScreen" requestData:@"Success"];
+
+        }
+    }@catch (NSException *exception) {
+        NSLog(@"%@", [NSString stringWithFormat:@"%@",exception.description]);
+    }
+}
+/*Handle Screen when Annotation started*/
+-(void)addAnnotationScreen:(CDVInvokedUrlCommand*)command{
+    //TO Do
+    [eventListional setObject:command.callbackId forKey:@"addAnnotationScreen"];
+    @try {
+        NSLog(@"ParentView %@",parentView);
+         NSDictionary* phrase = [command.arguments objectAtIndex:0];
+        if(phrase[@"viewOptions"] != nil){
+            [self createOptionView:phrase[@"viewOptions"]];
+            [self triggerSuccussJSEvent:@"addAnnotationScreen" actionName:@"addAnnotationScreen" requestData:@"Success"];
+
+        }
+    }@catch (NSException *exception) {
+        NSLog(@"%@", [NSString stringWithFormat:@"%@",exception.description]);
+    }
+}
+/*Handle Screen when screen share stoped*/
+-(void)removeScreenShare:(CDVInvokedUrlCommand*)command{
+    //TO Do
+    [eventListional setObject:command.callbackId forKey:@"removeScreenShare"];
+    [self cleanOptionView];
+    [self triggerSuccussJSEvent:@"removeScreenShare" actionName:@"removeScreenShare" requestData:@"Success"];
+}
+/*Handle Screen when Canvas stoped*/
+-(void)removeCanvasScreen:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"removeCanvasScreen"];
+    [self cleanOptionView];
+    [self triggerSuccussJSEvent:@"removeCanvasScreen" actionName:@"removeCanvasScreen" requestData:@"Success"];
+}
+/*Handle Screen when Annotation stoped*/
+-(void)removeAnnotationScreen:(CDVInvokedUrlCommand*)command{
+    [eventListional setObject:command.callbackId forKey:@"removeAnnotationScreen"];
+    [self cleanOptionView];
+    [self triggerSuccussJSEvent:@"removeAnnotationScreen" actionName:@"removeAnnotationScreen" requestData:@"Success"];
+}
+/*Hide Annotation Screen*/
+-(void)hideAnnotationScreen:(CDVInvokedUrlCommand*)command{
+    //TO Do
+    [eventListional setObject:command.callbackId forKey:@"hideAnnotationScreen"];
+      NSDictionary* argu = [command.arguments objectAtIndex:0];
+      @try {
+          //To Do
+              BOOL flag = [argu[@"hide"] boolValue];
+             mOptionView.hidden = flag;
+              [self triggerSuccussJSEvent:@"hideAnnotationScreen" actionName:@"hideAnnotationScreen" requestData:@"Success"];
+      }@catch (NSException *exception) {
+          NSLog(@"%@", [NSString stringWithFormat:@"%@",exception.description]);
+      }
+}
+-(void)createOptionStream:(NSDictionary *)dict{
+    NSDictionary *remoteStreamDict = mEnxRoom.streamsByStreamId;
+    NSString *streamId = [NSString stringWithFormat:@"%@",dict[@"streamId"]];
+    mOptionStream =  [remoteStreamDict objectForKey:streamId];
+    if(mOptionPlayer == nil){
+        mOptionPlayer = [[EnxPlayerView alloc]initRemoteView:CGRectZero];
+        mOptionPlayer.delegate = self;
+    }
+    [mOptionStream attachRenderer:mOptionPlayer];
+}
+/*Create option View for Screen Share ,Canvas,whiteboard,annotation*/
+-(void)createOptionView:(NSDictionary*)options{
+    if(mOptionView == nil){
+        mOptionView =[[UIView alloc]initWithFrame:CGRectZero];
+        [parentView addSubview:mOptionView];
+        [mOptionView setBackgroundColor:[UIColor blackColor]];
+        [parentView bringSubviewToFront:mOptionView];
+        [parentView bringSubviewToFront:mlocalView];
+        [self addConstantForOptionsView:options];
+        [mOptionView addSubview:mOptionPlayer];
+        [self setLayoutOptionPlayerConstant:mOptionPlayer];
+    }
+}
+/*Add Constant for optionView*/
+-(void)addConstantForOptionsView:(NSDictionary*)details{
+    mOptionView.translatesAutoresizingMaskIntoConstraints = false;
+                int height = 0;
+                int width = 0;
+               NSString *position = @"right";
+                int topMargin = 0;
+                int leftMargin = 0;
+                int rightMargin = 0;
+                int bottomMargin = 0;
+               if(details[@"height"] != nil){
+                   height = [details[@"height"] intValue];
+               }
+               if(details[@"width"] != nil){
+                   width = [details[@"width"] intValue];
+               }
+                if(details[@"margin_top"] != nil){
+                    topMargin = [details[@"margin_top"] intValue];
+                }
+                if(details[@"margin_left"] != nil){
+                    leftMargin = [details[@"margin_left"] intValue];
+                }
+                if(details[@"margin_right"] != nil){
+                    rightMargin = [details[@"margin_right"] intValue];
+                }
+                if(details[@"margin_bottom"] != nil){
+                    bottomMargin = [details[@"margin_bottom"] intValue];
+                }
+               if(details[@"position"] != nil){
+                   position = details[@"position"];
+               }
+            if(height == 0 || height >= parentView.bounds.size.height){
+                    height = parentView.bounds.size.height;
+                    height = height - (topMargin + bottomMargin);
+            }
+            if(width == 0 || width >= parentView.bounds.size.width){
+                width = parentView.bounds.size.width;
+                width = width - (leftMargin +rightMargin);
+            }
+    if([position isEqualToString:@"right"] ){
+              [mOptionView.topAnchor constraintEqualToAnchor:parentView.topAnchor constant:topMargin].active = true;
+              [mOptionView.trailingAnchor constraintEqualToAnchor:parentView.trailingAnchor constant:-(rightMargin)].active = true;
+                if(leftMargin == 0){
+                    leftMargin = parentView.bounds.size.width - width;
+                }
+            [mOptionView.leadingAnchor constraintEqualToAnchor:parentView.leadingAnchor constant:leftMargin].active = true;
+            if(bottomMargin == 0){
+                bottomMargin = parentView.bounds.size.height - height;
+            }
+        [mOptionView.bottomAnchor constraintEqualToAnchor:parentView.bottomAnchor constant:-(bottomMargin)].active = true;
+          }
+          else if([position isEqualToString:@"left"] ){
+              [mOptionView.topAnchor constraintEqualToAnchor:parentView.topAnchor constant:topMargin].active = true;
+              [mOptionView.leadingAnchor constraintEqualToAnchor:parentView.leadingAnchor constant:leftMargin].active = true;
+              if(bottomMargin == 0){
+                  bottomMargin = parentView.bounds.size.height - height;
+              }
+              [mOptionView.bottomAnchor constraintEqualToAnchor:parentView.bottomAnchor constant:-(bottomMargin)].active = true;
+              if(rightMargin == 0){
+                  rightMargin = parentView.bounds.size.width - width;
+              }
+              [mOptionView.trailingAnchor constraintEqualToAnchor:parentView.trailingAnchor constant:-(rightMargin)].active = true;
+          }
+          else if([position isEqualToString:@"top"] ){
+              [mOptionView.topAnchor constraintEqualToAnchor:parentView.topAnchor constant:topMargin].active = true;
+              [mOptionView.trailingAnchor constraintEqualToAnchor:parentView.trailingAnchor constant:-(rightMargin)].active = true;
+              if(bottomMargin == 0){
+                  bottomMargin = parentView.bounds.size.height - height;
+              }
+              [mOptionView.bottomAnchor constraintEqualToAnchor:parentView.bottomAnchor constant:-(bottomMargin)].active = true;
+              if(leftMargin == 0){
+                  leftMargin = parentView.bounds.size.width - width;
+              }
+              [mOptionView.leadingAnchor constraintEqualToAnchor:parentView.leadingAnchor constant:leftMargin].active = true;
+          }
+          else if([position isEqualToString:@"bottom"] ){
+              [mOptionView.bottomAnchor constraintEqualToAnchor:parentView.bottomAnchor constant:-(bottomMargin)].active = true;
+              [mOptionView.trailingAnchor constraintEqualToAnchor:parentView.trailingAnchor constant:-(rightMargin)].active = true;
+              if(topMargin == 0){
+                  topMargin = parentView.bounds.size.height - height;
+              }
+              [mOptionView.topAnchor constraintEqualToAnchor:parentView.topAnchor constant:topMargin].active = true;
+              if(leftMargin == 0){
+                 leftMargin = parentView.bounds.size.width - width;
+              }
+               [mOptionView.leadingAnchor constraintEqualToAnchor:parentView.leadingAnchor constant:leftMargin].active = true;
+          }
+}
+/*Add constant For OptionPlayer View*/
+-(void)setLayoutOptionPlayerConstant:(EnxPlayerView*)view{
+    view.translatesAutoresizingMaskIntoConstraints = false;
+    [view.leadingAnchor constraintEqualToAnchor:mOptionView.leadingAnchor constant:1.0].active = true;
+    [view.bottomAnchor constraintEqualToAnchor:mOptionView.bottomAnchor constant:1.0].active = true;
+    
+    [view.trailingAnchor constraintEqualToAnchor:mOptionView.trailingAnchor constant:1.0].active = true;
+    [view.topAnchor constraintEqualToAnchor:mOptionView.topAnchor constant:1.0].active = true;
+}
+
+-(void)cleanOptionView{
+    [mOptionStream detachRenderer];
+    [mOptionPlayer removeFromSuperview];
+    [mOptionView removeFromSuperview];
+    mOptionPlayer = nil;
+    mOptionView = nil;
+}
 #pragma -mark Chair Controller Methods
 /*This method for participent, Where he/she request for floor access*/
 -(void)requestFloor:(CDVInvokedUrlCommand*)command{
@@ -1961,18 +2193,30 @@ didFileUploadCancelled:(NSArray *_Nullable)data{
 }
 -(void)room:(EnxRoom *_Nullable)room screenSharedStarted:(NSArray *_Nullable)Data{
     [self triggerSuccussJSEvent:@"onScreenSharedStarted" actionName:@"onScreenSharedStarted" requestData:Data[0]];
+    if(Data.count == 0){
+        return;
+    }
+    [self createOptionStream:Data[0]];
 }
 -(void)room:(EnxRoom *_Nullable)room screenShareStopped:(NSArray *_Nullable)Data{
     [self triggerSuccussJSEvent:@"onScreenSharedStopped" actionName:@"onScreenSharedStopped" requestData:Data[0]];
 }
 -(void)room:(EnxRoom *_Nullable)room canvasStarted:(NSArray *_Nullable)Data{
     [self triggerSuccussJSEvent:@"onCanvasStarted" actionName:@"onCanvasStarted" requestData:Data[0]];
+    if(Data.count == 0){
+        return;
+    }
+    [self createOptionStream:Data[0]];
 }
 -(void)room:(EnxRoom *_Nullable)room canvasStopped:(NSArray *_Nullable)Data{
     [self triggerSuccussJSEvent:@"onCanvasStopped" actionName:@"onCanvasStopped" requestData:Data[0]];
 }
 -(void)room:(EnxRoom *_Nullable)room didAnnotationStarted:(NSArray *_Nullable)Data{
     [self triggerSuccussJSEvent:@"onAnnotationStarted" actionName:@"onAnnotationStarted" requestData:Data[0]];
+    if(Data.count == 0){
+        return;
+    }
+    [self createOptionStream:Data[0]];
 }
 -(void)room:(EnxRoom *_Nullable)room didAnnotationStopped:(NSArray *_Nullable)Data{
     [self triggerSuccussJSEvent:@"onAnnotationStopped" actionName:@"onAnnotationStopped" requestData:Data[0]];
@@ -2008,6 +2252,9 @@ didFileUploadCancelled:(NSArray *_Nullable)data{
 }
 -(void)didCapturedView:(UIImage*_Nonnull)snapShot{
     //TO Do
+    NSData *imageData = UIImagePNGRepresentation(snapShot);
+    NSString *strBase64 = [imageData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    [self triggerSuccussJSEvent:@"OnCapturedView" actionName:@"OnCapturedView" requestData:strBase64];
 }
 #pragma -mark Callback Methods for Chair controler
 - (void)didFloorRequested:(NSArray *_Nullable)Data{
@@ -2099,6 +2346,12 @@ didFileUploadCancelled:(NSArray *_Nullable)data{
     }
     if(mLocalStream != nil){
         mLocalStream = nil;
+    }
+    if(mOptionView != nil){
+        mOptionView = nil;
+    }
+    if(mOptionPlayer != nil){
+        mOptionPlayer = nil;
     }
 }
 @end

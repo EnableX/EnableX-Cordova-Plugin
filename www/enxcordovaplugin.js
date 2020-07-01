@@ -582,13 +582,13 @@ var EnxCordovaPlugin = {
 
   /**
    * To send custom chat message to the other clients.
-   * @param {String} text 
+   * @param {JSON} json 
    * @param {boolean} broadcast 
    * @param {Array} array 
    */
-  sendUserData: function (text, broadcast, array) {
+  sendUserData: function (json, broadcast, array) {
     var options = {};
-    options.text = text;
+    options.message = json;
     options.broadcast = broadcast;
     options.array = array;
     exec(null, null, PLUGIN_NAME, 'sendUserData', [options]);
@@ -756,8 +756,10 @@ var EnxCordovaPlugin = {
   /**
    * To eanble proximity sensor. true for enable and false for disable.
    * @param {boolean} status 
+   * @param {CallableFunction} successCallback 
+   * @param {CallableFunction} errorCallback
    */
-  enableProximitySensor: function (status) {
+  enableProximitySensor: function (status,successCallback, errorCallback) {
     var options = {};
     options.status = status;
     exec(successCallback, errorCallback, PLUGIN_NAME, 'enableProximitySensor', [options]);
@@ -793,12 +795,19 @@ var EnxCordovaPlugin = {
     exec(successCallback, errorCallback, PLUGIN_NAME, 'whoAmI', [options]);
   },
 
+  /**
+   * To start Annotation on given client ID
+   * @param {String} clientid 
+   */
   startAnnotation: function (clientid) {
     var options = {};
     options.clientId = clientid;
     exec(null, null, PLUGIN_NAME, 'startAnnotation', [options]);
   },
 
+  /**
+   * To stop Annotation.
+   */
   stopAnnotations: function () {
     var options = {};
     exec(null, null, PLUGIN_NAME, 'stopAnnotations', [options]);
