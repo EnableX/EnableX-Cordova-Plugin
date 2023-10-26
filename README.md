@@ -1,6 +1,6 @@
-# EnableX Cordova Plugin for Android and iOS 
+# EnableX Cordova Plugin: Integration Guide for Android and iOS
 
-
+Experience the power of EnableX's video capabilities directly in your Cordova-built Android and iOS applications. This repository houses the source code and sample implementations of the EnableX Cordova Plugin, aiming to bridge the gap between high-quality video interactions and cross-platform mobile development.
 
 ## Sample code
 
